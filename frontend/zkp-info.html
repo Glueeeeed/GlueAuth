@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>GlueCrypt | Zero-Knowledge Proofs</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+          integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"/>
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css"
+          integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
+    <link href="./src/style.css" rel="stylesheet">
+</head>
+<body class="bg-white">
+<nav class="fixed w-full top-0 z-10 h-25 text-amber-50 navbar ">
+    <div class="flex justify-start items-center">
+        <a href="/" class="text-4xl mt-7 mb-5 ml-10 font-['Pacifico'] text-[#eff1ed] no-underline">GlueCrypt</a>
+    </div>
+</nav>
+<main class="pt-32 pb-20 px-4 flex justify-center items-center min-h-screen">
+    <div class="w-full max-w-2xl">
+        <div class="bg-white p-8 md:p-12 rounded-3xl shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] border border-gray-100">
+            <div class="mb-10 text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-[#36382e]/5 text-[#36382e] rounded-2xl mb-6">
+                    <i class="ri-shield-check-fill text-3xl"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-[#36382e] tracking-tight mb-4">Zero-Knowledge Proofs</h1>
+                <p class="text-gray-500 text-lg">Prywatność przez matematykę, nie przez zaufanie.</p>
+            </div>
+
+            <div class="prose prose-slate max-w-none space-y-8 text-gray-700">
+                <section>
+                    <h2 class="text-xl font-bold text-[#36382e] mb-3 flex items-center gap-2">
+                        <i class="ri-question-line text-[#36382e]"></i>
+                        Czym jest ZKP?
+                    </h2>
+                    <p class="leading-relaxed">
+                        Dowód z wiedzą zerową (Zero-Knowledge Proof) to metoda kryptograficzna, która pozwala jednej stronie (udowadniającemu) udowodnić drugiej stronie (weryfikującemu), że dane stwierdzenie jest prawdziwe, bez ujawniania jakichkolwiek informacji poza samą prawdziwością tego stwierdzenia.
+                    </p>
+                </section>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                        <h3 class="font-bold text-[#36382e] mb-2 flex items-center gap-2">
+                            <i class="ri-lock-password-line"></i>
+                            Bez haseł
+                        </h3>
+                        <p class="text-sm text-gray-600">Nie przesyłasz nam swojego hasła. Udowadniasz jedynie, że je znasz, korzystając z zaawansowanych równań matematycznych.</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                        <h3 class="font-bold text-[#36382e] mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-user-secret"></i>
+                            Pełna anonimowość
+                        </h3>
+                        <p class="text-sm text-gray-600">Twoje dane osobowe nigdy nie trafiają do naszej bazy danych. Twoja tożsamość pozostaje tylko Twoja.</p>
+                    </div>
+                </div>
+
+                <section>
+                    <h2 class="text-xl font-bold text-[#36382e] mb-3">Jak to działa w GlueCrypt?</h2>
+                    <ol class="space-y-4">
+                        <li class="flex gap-4">
+                            <span class="shrink-0 w-8 h-8 bg-[#36382e] text-white rounded-full flex items-center justify-center font-bold text-sm">1</span>
+                            <p>Podczas logowania Twoja przeglądarka generuje unikalny dowód matematyczny na podstawie Twoich poświadczeń.</p>
+                        </li>
+                        <li class="flex gap-4">
+                            <span class="shrink-0 w-8 h-8 bg-[#36382e] text-white rounded-full flex items-center justify-center font-bold text-sm">2</span>
+                            <p>Tylko ten dowód (a nie Twoje hasło) jest wysyłany do naszych serwerów.</p>
+                        </li>
+                        <li class="flex gap-4">
+                            <span class="shrink-0 w-8 h-8 bg-[#36382e] text-white rounded-full flex items-center justify-center font-bold text-sm">3</span>
+                            <p>Serwer weryfikuje dowód. Jeśli się zgadza, zostajesz zalogowany, mimo że serwer nigdy nie widział Twojego hasła.</p>
+                        </li>
+                    </ol>
+                </section>
+
+                <div class="mt-10 pt-8 border-t border-gray-100 text-center">
+                    <a href="/register" class="inline-flex items-center gap-2 font-bold text-[#36382e] hover:underline underline-offset-4">
+                        <i class="ri-arrow-left-line"></i>
+                        Powrót do rejestracji
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="navbar text-white py-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 mt-6 md:mb-0">
+                <a class="text-3xl font-['Pacifico'] text-white" href="#">GlueCrypt</a>
+                <p class="mt-5 max-sm:text-sm opacity-80">Bezpieczne i anonimowe narzędzie do szyfrowania danych za pomocą AES.</p>
+            </div>
+        </div>
+        <div class="border-t border-white/20 mt-6 p-6 text-center">
+            <p class="opacity-80">Stworzono z <i class=" text-red-600 ri-heart-fill"></i> przez Glueeed.</p>
+            <p class="opacity-80">Projekt open-source dostępny na <a href="https://github.com/Glueeeeed/GlueNews"><i
+                    class="ri-github-fill"></i> GitHub</a></p>
+            <p class="text-sm mt-3 opacity-60">Version 1.0.0</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

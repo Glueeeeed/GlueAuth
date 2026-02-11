@@ -13,6 +13,7 @@ export default defineConfig({
             input: {
                 login: resolve(__dirname, 'login.html'),
                 register: resolve(__dirname, 'register.html'),
+                zkp: resolve(__dirname, 'zkp-info.html'),
             },
         },
     },
