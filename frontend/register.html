@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>GlueCrypt | Auth</title>
+    <title>GlueNews</title>
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
@@ -25,26 +25,38 @@
 <main class="justify-center items-center flex min-h-screen">
     <div class="w-full max-w-md">
         <div class="bg-white p-10 rounded-3xl shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] border border-gray-100">
-            <div id="registerSection" hidden>
+
+<!--            registerSection-->
+
+            <div class="space-y-6" id="registerSection">
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-extrabold text-[#36382e] tracking-tight">Zaloguj się</h1>
-                    <p class="text-gray-500 mt-2 text-sm">Zaloguj się aby dołączyć do GlueCrypt</p>
+                    <h1 class="text-3xl font-extrabold text-[#36382e] tracking-tight">Utwórz konto</h1>
+                    <p class="text-gray-500 mt-2 text-sm">Dołącz do zdecentralizowanej sieci GlueCrypt</p>
                 </div>
-
-                <div  class="space-y-6">
-                    <button id="registerBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
-                        <span>Kontynuuj z GlueAuth</span>
-                        <i class="ri-arrow-right-line transition-transform group-hover:translate-x-1"></i>
-                    </button>
+                <button id="registerBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
+                    <span>Kontynuuj z GlueAuth</span>
+                    <i class="ri-arrow-right-line transition-transform group-hover:translate-x-1"></i>
+                </button>
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div class="flex gap-3">
+                        <div>
+                            <p class="text-xs font-bold text-gray-700">Technologia Zero-Knowledge</p>
+                            <p class="text-[11px] text-gray-500 mt-1 leading-relaxed">
+                                Twoja tożsamość jest matematycznie chroniona. Nie przechowujemy haseł ani danych osobowych.
+                                <a href="#" class="text-[#36382e] underline decoration-dotted underline-offset-2">Dowiedz się więcej</a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-
                 <div class="mt-4 pt-6  text-center">
                     <p class="text-gray-600 text-sm">
-                        Nie masz jeszcze konta?
-                        <a href="/register" class="font-bold text-[#36382e] hover:underline underline-offset-4">Zarejestruj sie</a>
+                        Masz już konto?
+                        <a href="/login" class="font-bold text-[#36382e] hover:underline underline-offset-4">Zaloguj się</a>
                     </p>
                 </div>
             </div>
+
+<!--            info section-->
 
             <div id="infoSection" class="max-w-md mx-auto px-5 py-8" hidden>
                 <div class="text-center mb-10">
@@ -67,7 +79,10 @@
                 </button>
             </div>
 
-            <div id="qrSection" class="text-center">
+
+<!--            qr section-->
+
+            <div id="qrSection" class="text-center" hidden>
                 <h1 class="text-3xl font-bold text-[#36382e] mb-4">Twój kod QR</h1>
                 <p class="text-lg text-gray-800 leading-relaxed mb-6">Zeskanuj ten kod QR w GlueAuth, aby zalogować się na swoje konto na innym urządzeniu.</p>
                 <div id="qrCode" class="inline-block p-4 bg-gray-50 rounded-xl border border-gray-100">
@@ -75,7 +90,6 @@
                 <button id="downloadBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
                     <span>Pobierz kod QR</span>
                 </button>
-
             </div>
 
         </div>
@@ -95,8 +109,9 @@
                     class="ri-github-fill"></i> GitHub</a></p>
             <p class="text-sm mt-3 opacity-60">Version 1.0.0</p>
         </div>
+        <div id="tsparticles"></div>
     </div>
 </footer>
-<script src="./src/register.ts"></script>
+<script type="module" src="./src/register.ts"></script>
 </body>
 </html>
