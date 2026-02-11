@@ -1,8 +1,8 @@
 import express, { Router, Request, Response } from 'express';
-import {test} from '../controllers/testController';
+import {keyExchange} from '../controllers/keyExchangeController';
 
 const router: Router = express.Router();
 
-router.post('/test', test);
+router.post('/keyexchange', keyExchange);
 
 export default router;

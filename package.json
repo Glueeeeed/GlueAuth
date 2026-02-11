@@ -23,6 +23,8 @@
     "url": "https://github.com/Glueeeeed/GlueAuth/issues"
   },
   "dependencies": {
+    "@noble/ciphers": "^2.1.1",
+    "@noble/curves": "^2.0.1",
     "@semaphore-protocol/core": "^4.12.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

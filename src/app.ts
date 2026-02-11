@@ -11,7 +11,7 @@ import {corsEnabled, httpsMode, PORT, domain} from "./configs/settings";
 
 // Import Routes
 
-import test from "./routes/test";
+import keyenchange from "./routes/keyenchange";
 
 
 const app = express();
@@ -46,7 +46,7 @@ app.get('/gluecrypt/auth/register', (req: Request, res: Response)  => {
 
 // API endpoints
 
-app.use('/api', test);
+app.use('/api', keyenchange);
 
 
 
