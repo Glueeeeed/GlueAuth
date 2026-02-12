@@ -28,7 +28,7 @@
 
 <!--            registerSection-->
 
-            <div class="space-y-6" id="registerSection">
+            <div class="space-y-6" id="registerSection" >
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-extrabold text-[#36382e] tracking-tight">Utwórz konto</h1>
                     <p class="text-gray-500 mt-2 text-sm">Dołącz do zdecentralizowanej sieci GlueCrypt</p>
@@ -43,7 +43,7 @@
                             <p class="text-xs font-bold text-gray-700">Technologia Zero-Knowledge</p>
                             <p class="text-[11px] text-gray-500 mt-1 leading-relaxed">
                                 Twoja tożsamość jest matematycznie chroniona. Nie przechowujemy haseł ani danych osobowych.
-                                <a href="#" class="text-[#36382e] underline decoration-dotted underline-offset-2">Dowiedz się więcej</a>
+                                <a href="/zkp-info" class="text-[#36382e] underline decoration-dotted underline-offset-2">Dowiedz się więcej</a>
                             </p>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
 
 <!--            info section-->
 
-            <div id="infoSection" class="max-w-md mx-auto px-5 py-8" hidden>
+            <div id="infoSection" class="max-w-md mx-auto px-5 py-8" hidden  >
                 <div class="text-center mb-10">
                     <h1 class="text-3xl font-bold text-[#36382e] mb-4">Ważna informacja</h1>
 
@@ -71,6 +71,21 @@
                         Jak zgubisz ten kod QR albo ktoś Ci go zabierze, <strong>tracisz konto na zawsze</strong>.<br>
                         Nie przechowujemy żadnych haseł ani danych, więc nie możemy Ci pomóc odzyskać dostępu.
                     </p>
+
+
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 mt-5 mb-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-bold text-[#36382e]">Zaszyfruj kod QR</p>
+                                <p class="text-[11px] text-gray-500 mt-0.5">Dodaj 6-cyfrowy PIN dla bezpieczeństwa</p>
+                            </div>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input id="encryptQR" type="checkbox" value="" class="sr-only peer" checked>
+                                <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#36382e]"></div>
+                            </label>
+                        </div>
+                    </div>
+
                 </div>
 
                 <button id="understandBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
@@ -82,14 +97,37 @@
 
 <!--            qr section-->
 
-            <div id="qrSection" class="text-center" hidden>
+            <div id="qrSection" class="text-center" hidden >
                 <h1 class="text-3xl font-bold text-[#36382e] mb-4">Twój kod QR</h1>
                 <p class="text-lg text-gray-800 leading-relaxed mb-6">Zeskanuj ten kod QR w GlueAuth, aby zalogować się na swoje konto na innym urządzeniu.</p>
-                <div id="qrCode" class="inline-block p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div class="inline-block p-2 mt-2 mb-5 bg-gray-50 rounded-xl border border-gray-100">
+                    <canvas id="qrCode"></canvas>
                 </div>
+
+                <div id="pinInfo" class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 " hidden>
+                    Twoj kod PIN: <span id="pinCode" class="font-bold text-lg text-[#36382e]"></span>
+                    <p>Kod PIN jest potrzebny aby w przyszłości odszyfrować ten kod QR</p>
+                </div>
+
                 <button id="downloadBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
                     <span>Pobierz kod QR</span>
                 </button>
+            </div>
+
+
+<!--            generating section-->
+
+            <div id="generatingSection" hidden>
+                <div class="text-center mb-10">
+                    <h1 class="text-3xl font-bold text-[#36382e] mb-4">Generowanie konta...</h1>
+                    <p class="text-lg text-gray-800 leading-relaxed mb-6">To może potrwać kilka sekund, dziękujemy za cierpliwość!</p>
+                </div>
+                <div class="flex justify-center">
+                    <svg class="animate-spin h-10 w-10 text-[#36382e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                </div>
             </div>
 
         </div>
