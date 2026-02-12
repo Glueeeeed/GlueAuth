@@ -101,8 +101,8 @@ async function register(): Promise<void> {
     generatingSection.hidden = false;
     const sessionData : sessionData = await getSessionKey();
     const identity = new Identity();
-    // const fingerprintData : ThumbmarkResponse = await getFingerprint(); to jest ogolnie zjebane naprawie to pozniej, na razie testowo daje stringa
-    await securePrivateKey('dgfhfgjnf', identity.export(), sessionData.sessionID, sessionData.baseKey);
+    const fingerprintData : ThumbmarkResponse = await getFingerprint();
+    await securePrivateKey(fingerprintData.thumbmark, identity.export(), sessionData.sessionID, sessionData.baseKey);
     const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
     if (encryptQRData.checked) {
         const pin : string = generatePIN();
@@ -167,7 +167,7 @@ function generatePIN(): string {
     return (randomNumber % 1000000).toString().padStart(6, '0');
 }
 
-async function securePrivateKey(fingerprint: ThumbmarkResponse, privateKey: string, deviceID: string, baseKey: string ): Promise<void> {
+async function securePrivateKey(fingerprint: string, privateKey: string, deviceID: string, baseKey: string ): Promise<void> {
     const combinedKey : string = fingerprint + deviceID + baseKey;
     const salt : Uint8Array<ArrayBufferLike> = randomBytes(32)
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, salt, { c: 524288, dkLen: 32 });
@@ -187,7 +187,7 @@ async function encryptQR(privateKey: string, PIN: string): Promise<string> {
 async function insertKey(encryptedKey: string , salt : string) {
     try {
         const db = await openDB('gluecrypt', 2, {
-            upgrade(db, oldVersion, newVersion, transaction) {
+            upgrade(db) {
                 if (!db.objectStoreNames.contains('keys')) {
                     db.createObjectStore('keys');
                 }
