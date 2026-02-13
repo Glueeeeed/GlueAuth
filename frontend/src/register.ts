@@ -66,7 +66,7 @@ export async function getSessionKey() : Promise<sessionData> {
 
         const keyExchangeData  = await keyExchange.json();
         const serverPublicKeyBytes : Uint8Array<ArrayBufferLike>  = hexToBytes(keyExchangeData.serverPublicKey);
-        return {secret: bytesToHex(x25519.getSharedSecret(clientKeyPair.secretKey, serverPublicKeyBytes)).slice(0,32), sessionID: keyExchangeData.sessionID, baseKey: keyExchangeData.baseKey} as sessionData;
+        return {secret: bytesToHex(x25519.getSharedSecret(clientKeyPair.secretKey, serverPublicKeyBytes)), sessionID: keyExchangeData.sessionID, baseKey: keyExchangeData.baseKey} as sessionData;
     } catch (error) {
         console.error("Error generating session key:", error);
         throw error;
