@@ -9,6 +9,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 import { pbkdf2 } from '@noble/hashes/pbkdf2.js';
 import {Identity} from "@semaphore-protocol/core";
 import { openDB} from 'idb';
+import {numberToHexUnpadded} from "@noble/curves/utils.js";
 
 const registerBtn = document.getElementById("registerBtn") as HTMLButtonElement;
 const understandBtn = document.getElementById("understandBtn") as HTMLButtonElement;
@@ -97,30 +98,57 @@ export async function decryptAesGcm(cipherTextWithNonce : string, keyHex : strin
 }
 
 async function register(): Promise<void> {
-    const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
-    generatingSection.hidden = false;
-    const sessionData : sessionData = await getSessionKey();
-    const identity = new Identity();
-    const fingerprintData : ThumbmarkResponse = await getFingerprint();
-    await securePrivateKey(fingerprintData.thumbmark, identity.export(), sessionData.sessionID, sessionData.baseKey);
-    const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
-    if (encryptQRData.checked) {
-        const pin : string = generatePIN();
-        const encryptedData : string =  await encryptQR(identity.export(), pin);
-        await generateQR(encryptedData + '||' + 'ENCRYPTED' + '||');
-        const pinInfo = document.getElementById("pinInfo") as HTMLDivElement;
-        const pinCode = document.getElementById("pinCode") as HTMLSpanElement;
-        const qrSection = document.getElementById("qrSection") as HTMLDivElement;
-        generatingSection.hidden = true;
-        pinInfo.hidden = false;
-        qrSection.hidden = false;
-        pinCode.textContent = pin;
-    } else {
-        await generateQR(identity.export());
-        const qrSection = document.getElementById("qrSection") as HTMLDivElement;
-        generatingSection.hidden = true;
-        qrSection.hidden = false;
+    try {
+        const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
+        generatingSection.hidden = false;
+        const sessionData : sessionData = await getSessionKey();
+        const identity = new Identity();
+        const fingerprintData : ThumbmarkResponse = await getFingerprint();
+        await securePrivateKey(fingerprintData.thumbmark, identity.export(), sessionData.sessionID, sessionData.baseKey);
+        const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
+        const commitment : string  = numberToHexUnpadded(identity.commitment);
+        const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret);
+
+        const registerResponse = await fetch(`http://localhost:5173/api/register`, { // CHANGE TO YOUR DOMAIN
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                commitment: encryptedCommitment,
+                sessionID: sessionData.sessionID
+            })
+        });
+        if (!registerResponse.ok) {
+            throw new Error('HTTP error! status: ' + registerResponse.status);
+        }
+
+        if (encryptQRData.checked) {
+            const pin : string = generatePIN();
+            const encryptedData : string =  await encryptQR(identity.export(), pin);
+            await generateQR(encryptedData + '||' + 'ENCRYPTED' + '||');
+            const pinInfo = document.getElementById("pinInfo") as HTMLDivElement;
+            const pinCode = document.getElementById("pinCode") as HTMLSpanElement;
+            const qrSection = document.getElementById("qrSection") as HTMLDivElement;
+            generatingSection.hidden = true;
+            pinInfo.hidden = false;
+            qrSection.hidden = false;
+            pinCode.textContent = pin;
+        } else {
+            await generateQR(identity.export());
+            const qrSection = document.getElementById("qrSection") as HTMLDivElement;
+            generatingSection.hidden = true;
+            qrSection.hidden = false;
+        }
+    } catch (error) {
+        console.error("Error during registration process:", error);
+        const loading = document.getElementById("loading") as HTMLDivElement;
+        loading.hidden = true;
+        const errorSection = document.getElementById("errorMessage") as HTMLDivElement;
+        errorSection.hidden = false;
+
     }
+
 
 
 }
