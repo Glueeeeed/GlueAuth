@@ -16,10 +16,12 @@
   "dependencies": {
     "@noble/ciphers": "^2.1.1",
     "@noble/curves": "^2.0.1",
+    "@noble/hashes": "^2.0.1",
     "@semaphore-protocol/core": "^4.14.2",
     "@tailwindcss/vite": "^4.1.18",
     "@thumbmarkjs/thumbmarkjs": "^1.7.1",
     "@tsparticles/engine": "^3.9.1",
+    "idb": "^8.0.3",
     "qrcode": "^1.5.4",
     "tailwindcss": "^4.1.18"
   }

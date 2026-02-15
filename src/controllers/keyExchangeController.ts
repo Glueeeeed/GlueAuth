@@ -40,7 +40,7 @@ export const  keyExchange = async (req: Request<{}, {}, KeyExchangeRequest>, res
         const sharedSecret = computeSharedSecret(serverKeyPair.secret, uint8ClientPublicKey);
         const sessionID : string = crypto.randomBytes(10).toString('base64');
         const serverKeyHex : string = Buffer.from(serverKeyPair.public).toString('hex');
-        Secrets.set(sessionID, sharedSecret.sharedSecret.slice(0, 32));
+        Secrets.set(sessionID, sharedSecret.sharedSecret);
         res.status(200).json({ serverPublicKey: serverKeyHex, sessionID: sessionID, baseKey: process.env.baseKey || '' });
     } catch (error) {
         console.log(error);
