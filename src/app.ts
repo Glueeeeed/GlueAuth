@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import path from "path";
 import cors from 'cors';
+import {ZKP} from './utils/zkp'
+import {Identity} from "@semaphore-protocol/identity";
 import https from 'https';
 
 
@@ -12,6 +14,15 @@ import {corsEnabled, httpsMode, PORT, domain} from "./configs/settings";
 // Import Routes
 
 import keyenchange from "./routes/keyenchange";
+import auth from "./routes/auth";
+import {numberToHexUnpadded} from "@noble/curves/utils.js";
+
+
+
+// initialize Merkle Tree
+export const zkp = new ZKP();
+zkp.initializeGroup();
+
 
 
 const app = express();
@@ -47,6 +58,7 @@ app.get('/gluecrypt/auth/register', (req: Request, res: Response)  => {
 // API endpoints
 
 app.use('/api', keyenchange);
+app.use('/api/zkp/auth', auth);
 
 
 

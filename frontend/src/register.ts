@@ -109,18 +109,21 @@ async function register(): Promise<void> {
         const commitment : string  = numberToHexUnpadded(identity.commitment);
         const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret);
 
-        const registerResponse = await fetch(`http://localhost:5173/api/register`, { // CHANGE TO YOUR DOMAIN
+        const registerResponse = await fetch(`http://localhost:5173/api/zkp/auth/register`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 commitment: encryptedCommitment,
-                sessionID: sessionData.sessionID
+                sessionID: sessionData.sessionID,
             })
         });
         if (!registerResponse.ok) {
             throw new Error('HTTP error! status: ' + registerResponse.status);
+        }
+        if (registerResponse.status !== 200) {
+            throw new Error('Registration failed with status: ' + registerResponse.status);
         }
 
         if (encryptQRData.checked) {
@@ -146,7 +149,6 @@ async function register(): Promise<void> {
         loading.hidden = true;
         const errorSection = document.getElementById("errorMessage") as HTMLDivElement;
         errorSection.hidden = false;
-
     }
 
 
