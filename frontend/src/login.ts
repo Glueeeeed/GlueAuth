@@ -52,7 +52,6 @@ addEventListener('DOMContentLoaded', () => {
         scanQRBtn.addEventListener("click", async () => {
             videoContainer.hidden = false;
             qrScanner = startCameraScan(qrVideo, async (result) => {
-                console.log("Scanned QR from camera:", result);
                 if (qrScanner) {
                     qrScanner.stop();
                     qrScanner.destroy();

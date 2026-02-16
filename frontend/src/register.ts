@@ -47,7 +47,6 @@ async function register(): Promise<void> {
         const identity = new Identity();
         const fingerprintData : ThumbmarkResponse = await getFingerprint();
         const deviceID = localStorage.getItem('DeviceID') as string;
-        console.log("Secret:" + identity.export());
         await securePrivateKey(fingerprintData.thumbmark, identity.export(), deviceID, sessionData.baseKey);
         const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
         const commitment : string  = numberToHexUnpadded(identity.commitment);
