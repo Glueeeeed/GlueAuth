@@ -25,14 +25,14 @@
 <main class="justify-center items-center flex min-h-screen">
   <div class="w-full max-w-md">
     <div class="bg-white p-10 rounded-3xl shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] border border-gray-100">
-      <div id="registerSection" hidden>
+      <div id="loginSection" >
         <div class="text-center mb-8">
           <h1 class="text-3xl font-extrabold text-[#36382e] tracking-tight">Zaloguj się</h1>
           <p class="text-gray-500 mt-2 text-sm">Zaloguj się aby dołączyć do GlueCrypt</p>
         </div>
 
         <div  class="space-y-6">
-          <button id="registerBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
+          <button id="loginBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
             <span>Kontynuuj z GlueAuth</span>
             <i class="ri-arrow-right-line transition-transform group-hover:translate-x-1"></i>
           </button>
@@ -46,36 +46,63 @@
         </div>
       </div>
 
-      <div id="infoSection" class="max-w-md mx-auto px-5 py-8" hidden>
-        <div class="text-center mb-10">
-          <h1 class="text-3xl font-bold text-[#36382e] mb-4">Ważna informacja</h1>
+      <div id="secretNotFound" hidden>
+        <h1 class="text-xl font-extrabold text-[#36382e] tracking-tight">Nie znaleziono twoich poświadczeń!</h1>
+        <p class="text-gray-500 mt-2 text-sm">Aby przywrócić dostęp do Twojego konta, zeskanuj lub zaimportuj kod QR</p>
+        <div class="flex flex-row gap-3 mt-5 items-center max-md:flex-col">
+          <button id="scanQRBtn"
+                  class="group w-50 relative gap-3 px-2 py-3 text-base font-medium text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
+            <span>Zeskanuj kod QR</span>
+            <i class="fa-solid fa-qrcode"></i>
+          </button>
 
-          <p class="text-lg text-gray-800 leading-relaxed mb-6">
-            Żeby zalogować się na swoje konto z innego telefonu lub komputera,<br>
-            będziesz potrzebować <strong>tego kodu QR</strong>, który zaraz Ci pokażemy.
-          </p>
-
-          <p class="text-base text-red-600 font-medium leading-relaxed"><br>
-            Jak zgubisz ten kod QR albo ktoś Ci go zabierze, <strong>tracisz konto na zawsze</strong>.<br>
-            Nie przechowujemy żadnych haseł ani danych, więc nie możemy Ci pomóc odzyskać dostępu.
-          </p>
+          <label for="uploadQRBtn"
+                 class="group w-50 relative flex items-center justify-center gap-3 px-2 py-3 text-base font-medium text-white bg-[#4a4d3f] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] cursor-pointer">
+            <span>Wczytaj kod QR</span>
+            <i class="fa-solid fa-file-import"></i>
+            <input type="file" id="uploadQRBtn" accept="image/*" class="hidden">
+          </label>
         </div>
 
-        <button id="understandBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
-          <span>Rozumiem, pokaż kod QR</span>
-          <i class="ri-arrow-right-line transition-transform group-hover:translate-x-1"></i>
-        </button>
+        <div id="videoContainer" hidden class="mt-5 relative overflow-hidden rounded-2xl border-2 border-[#36382e]">
+          <video id="qrVideo" class="w-full h-auto"></video>
+          <button id="closeCameraBtn" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-700 transition-colors">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+
+        <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-xl flex items-center gap-3">
+          <i class="fa-solid fa-circle-info text-amber-600 text-xl"></i>
+          <p class="text-amber-800 text-sm font-medium">
+            Pamiętaj, że do użycia twojego kodu QR możemy wymagać od ciebie 6 cyfrowego kodu PIN.
+          </p>
+        </div>
       </div>
 
-      <div id="qrSection" class="text-center">
-        <h1 class="text-3xl font-bold text-[#36382e] mb-4">Twój kod QR</h1>
-        <p class="text-lg text-gray-800 leading-relaxed mb-6">Zeskanuj ten kod QR w GlueAuth, aby zalogować się na swoje konto na innym urządzeniu.</p>
-        <div id="qrCode" class="inline-block p-4 bg-gray-50 rounded-xl border border-gray-100">
+      <div id="decryptSection" hidden >
+        <div class="flex items-center gap-2 mb-4 cursor-pointer hover:opacity-70 transition-opacity w-fit" id="backToUploadBtn">
+          <i class="ri-arrow-left-s-line text-xl text-gray-400"></i>
+          <span class="text-sm font-bold text-gray-400 uppercase tracking-wider">Wróć</span>
         </div>
-        <button id="downloadBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
-          <span>Pobierz kod QR</span>
-        </button>
+
+        <h1 class="text-xl font-extrabold text-[#36382e] tracking-tight">Odszyfruj kod QR</h1>
+        <p class="text-gray-500 mt-2 text-sm">Wprowadź swój 6-cyfrowy kod PIN, aby odblokować poświadczenia.</p>
+
+        <div class="mt-6 space-y-4">
+          <div class="relative">
+            <input type="password" maxlength="6" inputmode="numeric" placeholder="••••••"
+                   class="w-full px-6 py-4 text-2xl tracking-[1em] text-center font-bold bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#36382e]/20 transition-all">
+          </div>
+
+          <button id="confirmPinBtn"
+                  class="w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
+            <span>Odszyfruj i zaloguj</span>
+            <i class="ri-lock-unlock-line"></i>
+          </button>
+        </div>
       </div>
+      
+      
 
     </div>
   </div>
@@ -96,6 +123,6 @@
     </div>
   </div>
 </footer>
-<script src="./src/login.ts"></script>
+<script  type="module" src="./src/login.ts"></script>
 </body>
 </html>

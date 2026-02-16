@@ -22,6 +22,7 @@
     "@thumbmarkjs/thumbmarkjs": "^1.7.1",
     "@tsparticles/engine": "^3.9.1",
     "idb": "^8.0.3",
+    "qr-scanner": "^1.4.2",
     "qrcode": "^1.5.4",
     "tailwindcss": "^4.1.18"
   }
