@@ -1,4 +1,4 @@
-import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
+import { type ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
 import QRCode from 'qrcode'
 import {randomBytes,bytesToHex} from "@noble/ciphers/utils.js";
 import { sha256 } from '@noble/hashes/sha2.js';
@@ -47,7 +47,8 @@ async function register(): Promise<void> {
         const identity = new Identity();
         const fingerprintData : ThumbmarkResponse = await getFingerprint();
         const deviceID = localStorage.getItem('DeviceID') as string;
-        await securePrivateKey(fingerprintData.thumbmark, identity.export(), deviceID, sessionData.baseKey);
+        const privateKey = bytesToHex(identity.privateKey as Uint8Array);
+        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey);
         const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
         const commitment : string  = numberToHexUnpadded(identity.commitment);
         const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret);
@@ -71,7 +72,8 @@ async function register(): Promise<void> {
 
         if (encryptQRData.checked) {
             const pin : string = generatePIN();
-            const encryptedData : string =  await encryptQR(identity.export(), pin);
+            const privateKey : string = bytesToHex(identity.privateKey as Uint8Array);
+            const encryptedData : string =  await encryptQR(privateKey, pin);
             await generateQR(encryptedData + '||' + 'ENCRYPTED' + '||');
             const pinInfo = document.getElementById("pinInfo") as HTMLDivElement;
             const pinCode = document.getElementById("pinCode") as HTMLSpanElement;
@@ -81,7 +83,8 @@ async function register(): Promise<void> {
             qrSection.hidden = false;
             pinCode.textContent = pin;
         } else {
-            await generateQR(identity.export());
+            const privateKey : string = bytesToHex(identity.privateKey as Uint8Array);
+            await generateQR(privateKey);
             const qrSection = document.getElementById("qrSection") as HTMLDivElement;
             generatingSection.hidden = true;
             qrSection.hidden = false;
