@@ -41,6 +41,8 @@ export interface sessionData {
 
 async function register(): Promise<void> {
     try {
+        const nonceHex : string = bytesToHex(randomBytes(12));
+        const sessionNonceHex : string = bytesToHex(randomBytes(12));
         const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
         generatingSection.hidden = false;
         const sessionData : sessionData = await getSessionKey();
@@ -48,10 +50,10 @@ async function register(): Promise<void> {
         const fingerprintData : ThumbmarkResponse = await getFingerprint();
         const deviceID = localStorage.getItem('DeviceID') as string;
         const privateKey = bytesToHex(identity.privateKey as Uint8Array);
-        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey);
+        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, nonceHex);
         const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
         const commitment : string  = numberToHexUnpadded(identity.commitment);
-        const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret);
+        const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,sessionNonceHex);
 
         const registerResponse = await fetch(`http://localhost:5173/api/zkp/auth/register`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
@@ -61,6 +63,7 @@ async function register(): Promise<void> {
             body: JSON.stringify({
                 commitment: encryptedCommitment,
                 sessionID: sessionData.sessionID,
+                nonceHex: nonceHex,
             })
         });
         if (!registerResponse.ok) {
@@ -145,10 +148,12 @@ function generatePIN(): string {
 
 
 async function encryptQR(privateKey: string, PIN: string): Promise<string> {
+    const nonce : Uint8Array<ArrayBufferLike> = randomBytes(12);
+    const nonceHex : string = bytesToHex(nonce);
     const salt : Uint8Array<ArrayBufferLike> = randomBytes(32);
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, PIN, salt, { c: 524288, dkLen: 32 });
     console.log(bytesToHex(key));
-    const encryptedData : string = await encryptAesGcm(privateKey, bytesToHex(key));
+    const encryptedData : string = await encryptAesGcm(privateKey, bytesToHex(key),nonceHex);
     return encryptedData + "_" + bytesToHex(salt);
 }
 

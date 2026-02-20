@@ -1,8 +1,7 @@
 import {openDB} from "idb";
 import {decryptAesGcm, getFingerprint, getSessionKey, scanQRCode, securePrivateKey, startCameraScan, verifyDeviceID} from "./utils.ts";
 import type {sessionData} from "./register.ts";
-import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
-import {bytesToHex, hexToBytes} from "@noble/ciphers/utils.js";
+import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";import {bytesToHex, hexToBytes, randomBytes} from "@noble/ciphers/utils.js";
 import {pbkdf2} from "@noble/hashes/pbkdf2.js";
 import {sha256} from "@noble/hashes/sha2.js";
 import QrScanner from 'qr-scanner';
@@ -45,7 +44,8 @@ addEventListener('DOMContentLoaded', () => {
                         notFoundSection.hidden = true;
                         decryptSection.hidden = false;
                     } else {
-                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, qrData, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string);
+                        const nonceHex  = bytesToHex(randomBytes(12));
+                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, qrData, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex);
                         login();
                     }
                 } catch (error) {
@@ -73,7 +73,8 @@ addEventListener('DOMContentLoaded', () => {
                     notFoundSection.hidden = true;
                     decryptSection.hidden = false;
                 } else {
-                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, result, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string);
+                    const nonceHex  = bytesToHex(randomBytes(12));
+                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, result, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex);
                     login();
                 }
             });
@@ -97,12 +98,17 @@ addEventListener('DOMContentLoaded', () => {
             const encryptedData = sessionStorage.getItem("encryptedQrCodeVal");
             if (pin && encryptedData) {
                 try {
+
+                    // Change extract nonce in qr
+
+                    const nonceHex  = bytesToHex(randomBytes(12));
                     const decryptedKey = await decryptQR(encryptedData, pin);
                     await securePrivateKey(
                         sessionStorage.getItem("fingerprint") as string,
                         decryptedKey,
                         localStorage.getItem("DeviceID") as string,
-                        sessionStorage.getItem("baseKey") as string
+                        sessionStorage.getItem("baseKey") as string,
+                        nonceHex as string
                     );
                     const decryptSection = document.getElementById("decryptSection") as HTMLDivElement;
                     decryptSection.hidden = true;
@@ -121,31 +127,13 @@ addEventListener('DOMContentLoaded', () => {
 
     verifyDeviceID();
 });
-async function decryptQR(encryptedData: string, PIN: string): Promise<string> {
-
-
-
-    const [encrypted, salt] = encryptedData.split("_");
-    const [wrappedSalt, tag] = salt.split("||");
-    console.log(encryptedData);
-    console.log(salt);
-    console.log(tag);
-    console.log(wrappedSalt);
-
-
-    if (!encrypted || !salt) {
-        throw new Error("Nieprawidłowy format danych QR");
-    }
-
-    const saltBytes = hexToBytes(wrappedSalt);
-    const key = pbkdf2(sha256, PIN, saltBytes, { c: 524288, dkLen: 32 });
-    console.log(bytesToHex(key))
-    console.log("Encrypted" + encrypted)
-
-    return await decryptAesGcm(encrypted, bytesToHex(key));
+async function decryptQR(encryptedData: string, PIN: string, nonceHex : string, salt : string): Promise<string> {
+    const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(salt);
+    const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, PIN, saltBytes, { c: 524288, dkLen: 32 });
+    return await decryptAesGcm(encryptedData, bytesToHex(key), nonceHex);
 }
 
-async function checkIfSecretExists() : Promise<string | null> {
+async function checkIfSecretExists() : Promise<object | null> {
     try {
         const db = await openDB('gluecrypt', 2, {
             upgrade(db) {
@@ -155,8 +143,10 @@ async function checkIfSecretExists() : Promise<string | null> {
             }
         });
         const existingKey : string = await db.get('secrets', 'privateKey');
-        if (existingKey != undefined) {
-            return existingKey;
+        const salt : string = await db.get('secrets', 'salt');
+        const nonceHex : string = await db.get('secrets', 'nonceHex');
+        if (existingKey != undefined && nonceHex != undefined && salt != undefined) {
+            return {key: existingKey, salt: salt, nonce: nonceHex};
         } else {
             const loginSection = document.getElementById("loginSection") as HTMLDivElement;
             const secretNotFound = document.getElementById("secretNotFound") as HTMLDivElement;
@@ -187,13 +177,18 @@ async function login(): Promise<void> {
     sessionStorage.setItem("fingerprint", deviceID);
     sessionStorage.setItem("baseKey", baseKey);
 
-    const encryptedSecret : string | null = await checkIfSecretExists();
+    const encryptedSecret : object | null = await checkIfSecretExists();
     if (encryptedSecret != null) {
+        interface secretStructure {
+            key : string;
+            salt: string;
+            nonceHex: string;
+        }
+        const secrets = encryptedSecret as secretStructure;
         const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
-        const [encryptedData, salt] : string[]  = encryptedSecret.split("|");
-        const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(salt);
+        const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
         const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, { c: 524288, dkLen: 32 });
-        const secret : string = await decryptAesGcm(encryptedData,bytesToHex(key));
+        const secret : string = await decryptAesGcm(secrets.key,bytesToHex(key), secrets.nonceHex);
         const merkleRoot : Group = await getMerkleRoot();
         const proof : SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret);
         await authenticateViaProof(proof, sessionData.sessionID);
