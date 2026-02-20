@@ -1,11 +1,16 @@
 import {openDB} from "idb";
-import {getSessionKey, verifyDeviceID, decryptAesGcm, getFingerprint, scanQRCode, startCameraScan, securePrivateKey} from "./utils.ts";
+import {decryptAesGcm, getFingerprint, getSessionKey, scanQRCode, securePrivateKey, startCameraScan, verifyDeviceID} from "./utils.ts";
 import type {sessionData} from "./register.ts";
 import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
 import {bytesToHex, hexToBytes} from "@noble/ciphers/utils.js";
 import {pbkdf2} from "@noble/hashes/pbkdf2.js";
 import {sha256} from "@noble/hashes/sha2.js";
 import QrScanner from 'qr-scanner';
+import {Identity} from "@semaphore-protocol/identity";
+import {Group} from "@semaphore-protocol/group";
+import {generateProof} from "@semaphore-protocol/proof"
+import {hexToNumber} from "@noble/curves/utils.js";
+import type {SemaphoreProof} from "@semaphore-protocol/core";
 
 
 addEventListener('DOMContentLoaded', () => {
@@ -15,6 +20,8 @@ addEventListener('DOMContentLoaded', () => {
     const videoContainer = document.getElementById("videoContainer") as HTMLDivElement;
     const qrVideo = document.getElementById("qrVideo") as HTMLVideoElement;
     const closeCameraBtn = document.getElementById("closeCameraBtn") as HTMLButtonElement;
+    const decryptBtn = document.getElementById("decryptBtn") as HTMLButtonElement;
+    const pinInput = document.getElementById("pinInput") as HTMLInputElement;
 
     let qrScanner: QrScanner | null = null;
 
@@ -84,8 +91,59 @@ addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if (decryptBtn && pinInput) {
+        decryptBtn.addEventListener("click", async () => {
+            const pin = pinInput.value;
+            const encryptedData = sessionStorage.getItem("encryptedQrCodeVal");
+            if (pin && encryptedData) {
+                try {
+                    const decryptedKey = await decryptQR(encryptedData, pin);
+                    await securePrivateKey(
+                        sessionStorage.getItem("fingerprint") as string,
+                        decryptedKey,
+                        localStorage.getItem("DeviceID") as string,
+                        sessionStorage.getItem("baseKey") as string
+                    );
+                    const decryptSection = document.getElementById("decryptSection") as HTMLDivElement;
+                    decryptSection.hidden = true;
+                    const loginSection = document.getElementById("loginSection") as HTMLDivElement;
+                    loginSection.hidden = false;
+                    await login();
+                } catch (error) {
+                    console.error("Decryption failed:", error);
+                    alert("Błędny PIN lub uszkodzone dane.");
+                }
+            } else {
+                alert("Podaj PIN.");
+            }
+        });
+    }
+
     verifyDeviceID();
 });
+async function decryptQR(encryptedData: string, PIN: string): Promise<string> {
+
+
+
+    const [encrypted, salt] = encryptedData.split("_");
+    const [wrappedSalt, tag] = salt.split("||");
+    console.log(encryptedData);
+    console.log(salt);
+    console.log(tag);
+    console.log(wrappedSalt);
+
+
+    if (!encrypted || !salt) {
+        throw new Error("Nieprawidłowy format danych QR");
+    }
+
+    const saltBytes = hexToBytes(wrappedSalt);
+    const key = pbkdf2(sha256, PIN, saltBytes, { c: 524288, dkLen: 32 });
+    console.log(bytesToHex(key))
+    console.log("Encrypted" + encrypted)
+
+    return await decryptAesGcm(encrypted, bytesToHex(key));
+}
 
 async function checkIfSecretExists() : Promise<string | null> {
     try {
@@ -131,14 +189,56 @@ async function login(): Promise<void> {
 
     const encryptedSecret : string | null = await checkIfSecretExists();
     if (encryptedSecret != null) {
-        const combinedKey = fingerprint.thumbmark + deviceID + baseKey;
+        const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
         const [encryptedData, salt] : string[]  = encryptedSecret.split("|");
         const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(salt);
         const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, { c: 524288, dkLen: 32 });
         const secret : string = await decryptAesGcm(encryptedData,bytesToHex(key));
-        console.log(secret)
+        const merkleRoot : Group = await getMerkleRoot();
+        const proof : SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret);
+        await authenticateViaProof(proof, sessionData.sessionID);
     }
 
     return;
+}
+
+async function getMerkleRoot() : Promise<Group> {
+    const response: Response = await fetch('http://localhost:5173/api/zkp/members', {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+        }
+    })
+    const obj =  await response.json();
+    const commitmentsHex = obj.response;
+    const group = new Group();
+    commitmentsHex.forEach((m: string) => group.addMember(hexToNumber(m)));
+    return group;
+}
+
+
+async function generateProofs(group : Group, sessionID: string, privateKey: string) {
+    const identity = new Identity(hexToBytes(privateKey));
+    const scope : string = sessionID;
+    const message = "GlueAuth"
+    return await generateProof(identity, group, message, scope);
+}
+
+async function authenticateViaProof(proof : object , sessionID : string,): Promise<void> {
+    const authResponse = await fetch('http://localhost:5173/api/zkp/auth/proof', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            zkp: proof,
+            sessionID: sessionID,
+        }),
+    })
+
+    if (authResponse.status === 200) {
+        alert('Pomyślnie zalogowano');
+    }
 }
 

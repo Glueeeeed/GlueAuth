@@ -15,8 +15,7 @@ import {corsEnabled, httpsMode, PORT, domain} from "./configs/settings";
 
 import keyenchange from "./routes/keyenchange";
 import auth from "./routes/auth";
-import {numberToHexUnpadded} from "@noble/curves/utils.js";
-
+import Zkp from "./routes/zkp";
 
 
 // initialize Merkle Tree
@@ -59,6 +58,7 @@ app.get('/gluecrypt/auth/register', (req: Request, res: Response)  => {
 
 app.use('/api', keyenchange);
 app.use('/api/zkp/auth', auth);
+app.use('/api/zkp', Zkp)
 
 
 

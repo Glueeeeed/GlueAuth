@@ -144,13 +144,12 @@ function generatePIN(): string {
 }
 
 
-
-
 async function encryptQR(privateKey: string, PIN: string): Promise<string> {
     const salt : Uint8Array<ArrayBufferLike> = randomBytes(32);
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, PIN, salt, { c: 524288, dkLen: 32 });
+    console.log(bytesToHex(key));
     const encryptedData : string = await encryptAesGcm(privateKey, bytesToHex(key));
-    return encryptedData + "::" + bytesToHex(salt);
+    return encryptedData + "_" + bytesToHex(salt);
 }
 
 
