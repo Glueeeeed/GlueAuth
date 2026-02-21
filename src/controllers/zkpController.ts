@@ -1,3 +1,10 @@
+/**
+ * ZKP Controller Module
+ *
+ * This module provides endpoints for ZKP group management, such as retrieving group members.
+ *
+ * @module zkpController
+ */
 import {Response, Request} from 'express';
 import {zkp} from "../app";
 

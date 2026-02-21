@@ -1,3 +1,10 @@
+/**
+ * Auth Controller Module
+ *
+ * This module handles user registration by storing commitments and login via ZKP proof verification with JWT issuance.
+ *
+ * @module authController
+ */
 import {Response, Request} from "express";
 import {checkIfCommitmentExists, checkIfNullifierExists, registerCommitment, registerNullifier} from "../services/authService";
 import {decryptAesGcm} from "../utils/crypto";
