@@ -44,23 +44,19 @@ export function verifyDeviceID() {
     }
 }
 
-export async function encryptAesGcm(plainText : string, keyHex : string) : Promise<string> {
-    const nonce : Uint8Array<ArrayBufferLike> = randomBytes(12);
+export async function encryptAesGcm(plainText : string, keyHex : string, nonceHex : string) : Promise<string> {
+    const nonce : Uint8Array<ArrayBufferLike> = hexToBytes(nonceHex);
     const key : Uint8Array<ArrayBufferLike> = hexToBytes(keyHex);
     const data : Uint8Array<ArrayBufferLike> = new TextEncoder().encode(plainText);
     const aes : Cipher = gcm(key, nonce);
     const cipher : Uint8Array<ArrayBufferLike> = aes.encrypt(data);
     const uint8Array = new Uint8Array(cipher);
-    return bytesToHex(uint8Array) + ":" + bytesToHex(nonce);
+    return bytesToHex(uint8Array);
 }
 
-export async function decryptAesGcm(cipherTextWithNonce : string, keyHex : string) : Promise<string> {
-    const parts = cipherTextWithNonce.split(":");
-    if (parts.length !== 2) {
-        throw new Error("Invalid cipher text format. Expected 'cipher:nonce'");
-    }
-    const cipherText : Uint8Array<ArrayBufferLike> = hexToBytes(parts[0]);
-    const nonce : Uint8Array<ArrayBufferLike> = hexToBytes(parts[1]);
+export async function decryptAesGcm(cipherTextHex : string, keyHex : string , nonceHex: string) : Promise<string> {
+    const nonce : Uint8Array<ArrayBufferLike> = hexToBytes(nonceHex);
+    const cipherText : Uint8Array<ArrayBufferLike> = hexToBytes(cipherTextHex);
     const key : Uint8Array<ArrayBufferLike> = hexToBytes(keyHex);
     const aes : Cipher = gcm(key, nonce);
     const plainTextBytes : Uint8Array<ArrayBufferLike> = aes.decrypt(cipherText);
@@ -72,7 +68,7 @@ export async function getFingerprint() : Promise<ThumbmarkResponse> {
     return await tm.get();
 }
 
-export async function insertKey(encryptedKey: string , salt : string) {
+export async function insertKey(encryptedKey: string , salt : string, nonceHex : string) : Promise<void>  {
     try {
         const db = await openDB('gluecrypt', 2, {
             upgrade(db) {
@@ -81,21 +77,22 @@ export async function insertKey(encryptedKey: string , salt : string) {
                 }
             }
         });
-        const data = encryptedKey + "|" + salt;
+        const data = encryptedKey;
         await db.put('secrets', data, 'privateKey');
+        await db.put('secrets', salt, 'salt');
+        await db.put('secrets', nonceHex, 'nonceHex');
     } catch (error) {
         console.error('Failed to save:', error);
-        return null;
     }
 }
 
 
-export async function securePrivateKey(fingerprint: string, privateKey: string, deviceID: string, baseKey: string ): Promise<void> {
+export async function securePrivateKey(fingerprint: string, privateKey: string, deviceID: string, baseKey: string, nonceHex : string ): Promise<void> {
     const combinedKey : string = fingerprint + deviceID + baseKey;
     const salt : Uint8Array<ArrayBufferLike> = randomBytes(32)
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, salt, { c: 524288, dkLen: 32 });
-    const encryptedPrivateKey : string =  await encryptAesGcm(privateKey, bytesToHex(key));
-    await insertKey(encryptedPrivateKey, bytesToHex(salt));
+    const encryptedPrivateKey : string =  await encryptAesGcm(privateKey, bytesToHex(key), nonceHex);
+    await insertKey(encryptedPrivateKey, bytesToHex(salt), nonceHex);
 
 }
 

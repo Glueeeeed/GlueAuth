@@ -1,4 +1,4 @@
-import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
+import { type ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
 import QRCode from 'qrcode'
 import {randomBytes,bytesToHex} from "@noble/ciphers/utils.js";
 import { sha256 } from '@noble/hashes/sha2.js';
@@ -41,16 +41,19 @@ export interface sessionData {
 
 async function register(): Promise<void> {
     try {
+        const nonceHex : string = bytesToHex(randomBytes(12));
+        const sessionNonceHex : string = bytesToHex(randomBytes(12));
         const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
         generatingSection.hidden = false;
         const sessionData : sessionData = await getSessionKey();
         const identity = new Identity();
         const fingerprintData : ThumbmarkResponse = await getFingerprint();
         const deviceID = localStorage.getItem('DeviceID') as string;
-        await securePrivateKey(fingerprintData.thumbmark, identity.export(), deviceID, sessionData.baseKey);
+        const privateKey = bytesToHex(identity.privateKey as Uint8Array);
+        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, nonceHex);
         const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
         const commitment : string  = numberToHexUnpadded(identity.commitment);
-        const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret);
+        const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,sessionNonceHex);
 
         const registerResponse = await fetch(`http://localhost:5173/api/zkp/auth/register`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
@@ -60,6 +63,7 @@ async function register(): Promise<void> {
             body: JSON.stringify({
                 commitment: encryptedCommitment,
                 sessionID: sessionData.sessionID,
+                nonceHex: sessionNonceHex,
             })
         });
         if (!registerResponse.ok) {
@@ -70,9 +74,22 @@ async function register(): Promise<void> {
         }
 
         if (encryptQRData.checked) {
+            interface qrDataStructure {
+                key : string,
+                encrypted : boolean,
+                salt: string,
+                nonce : string,
+            }
             const pin : string = generatePIN();
-            const encryptedData : string =  await encryptQR(identity.export(), pin);
-            await generateQR(encryptedData + '||' + 'ENCRYPTED' + '||');
+            const privateKey : string = bytesToHex(identity.privateKey as Uint8Array);
+            const encryptedData  =  await encryptQR(privateKey, pin) as qrDataStructure;
+            const qrData : string = JSON.stringify({
+                key: encryptedData.key,
+                encrypted: true,
+                salt: encryptedData.salt,
+                nonce: encryptedData.nonce,
+            })
+            await generateQR(qrData);
             const pinInfo = document.getElementById("pinInfo") as HTMLDivElement;
             const pinCode = document.getElementById("pinCode") as HTMLSpanElement;
             const qrSection = document.getElementById("qrSection") as HTMLDivElement;
@@ -81,7 +98,12 @@ async function register(): Promise<void> {
             qrSection.hidden = false;
             pinCode.textContent = pin;
         } else {
-            await generateQR(identity.export());
+            const privateKey : string = bytesToHex(identity.privateKey as Uint8Array);
+            const qrData : string = JSON.stringify({
+                key: privateKey,
+                encrypted: false
+            })
+            await generateQR(qrData);
             const qrSection = document.getElementById("qrSection") as HTMLDivElement;
             generatingSection.hidden = true;
             qrSection.hidden = false;
@@ -141,13 +163,14 @@ function generatePIN(): string {
 }
 
 
-
-
-async function encryptQR(privateKey: string, PIN: string): Promise<string> {
+async function encryptQR(privateKey: string, PIN: string): Promise<object> {
+    const nonce : Uint8Array<ArrayBufferLike> = randomBytes(12);
     const salt : Uint8Array<ArrayBufferLike> = randomBytes(32);
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, PIN, salt, { c: 524288, dkLen: 32 });
-    const encryptedData : string = await encryptAesGcm(privateKey, bytesToHex(key));
-    return encryptedData + "::" + bytesToHex(salt);
+    console.log(bytesToHex(key));
+    console.log("Pirvate key " + privateKey)
+    const encryptedData : string = await encryptAesGcm(privateKey, bytesToHex(key),bytesToHex(nonce));
+    return {key: encryptedData, salt: bytesToHex(salt) , nonce: bytesToHex(nonce)};
 }
 
 

@@ -36,7 +36,7 @@ export const  keyExchange = async (req: Request<{}, {}, KeyExchangeRequest>, res
             return;
         }
         const uint8ClientPublicKey : Uint8Array<ArrayBufferLike> = Uint8Array.from(Buffer.from(clientPublicKey, 'hex'));
-        const serverKeyPair   = generateKeyPair();
+        const serverKeyPair    = generateKeyPair();
         const sharedSecret = computeSharedSecret(serverKeyPair.secret, uint8ClientPublicKey);
         const sessionID : string = crypto.randomBytes(10).toString('base64');
         const serverKeyHex : string = Buffer.from(serverKeyPair.public).toString('hex');
