@@ -12,13 +12,9 @@ export async function encryptAesGcm(plainText : string, keyHex : string) : Promi
     return bytesToHex(uint8Array) + ":" + bytesToHex(nonce);
 }
 
-export async function decryptAesGcm(cipherTextWithNonce : string, keyHex : string) : Promise<string> {
-    const parts = cipherTextWithNonce.split(":");
-    if (parts.length !== 2) {
-        throw new Error("Invalid cipher text format. Expected 'cipher:nonce'");
-    }
-    const cipherText : Uint8Array<ArrayBufferLike> = hexToBytes(parts[0]);
-    const nonce : Uint8Array<ArrayBufferLike> = hexToBytes(parts[1]);
+export async function decryptAesGcm(cipherTextHex : string, keyHex : string , nonceHex: string) : Promise<string> {
+    const nonce : Uint8Array<ArrayBufferLike> = hexToBytes(nonceHex);
+    const cipherText : Uint8Array<ArrayBufferLike> = hexToBytes(cipherTextHex);
     const key : Uint8Array<ArrayBufferLike> = hexToBytes(keyHex);
     const aes : Cipher = gcm(key, nonce);
     const plainTextBytes : Uint8Array<ArrayBufferLike> = aes.decrypt(cipherText);
