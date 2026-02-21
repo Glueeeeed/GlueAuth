@@ -39,13 +39,13 @@ GlueAuth is a decentralized authentication system leveraging Zero-Knowledge Proo
    npm install
    ```
 
- **Build the frontend:**
+**Build the frontend:**
    ```
    npm run build
    ```
- 3. Copy `src/configs/example_secrets.env` to `.env` and configure:
-   - Database credentials (MySQL)
-   - Any other secrets (e.g., JWT secret)
+3. Copy `src/configs/example_secrets.env` to `.env` and configure:
+- Database credentials (MySQL)
+- Any other secrets (e.g., JWT secret)
 4. Start the server:
    ```
    npm start
@@ -114,13 +114,13 @@ GlueAuth to zdecentralizowany system autentykacji wykorzystujący Dowody z zerow
    npm install
    ```
 
- **Zbuduj frontend:**
+**Zbuduj frontend:**
    ```
    npm run build
    ```
- 3. Skopiuj `src/configs/example_secrets.env` do `.env` i skonfiguruj:
-   - Dane dostępowe do bazy (MySQL)
-   - Inne sekrety (np. sekret JWT)
+3. Skopiuj `src/configs/example_secrets.env` do `.env` i skonfiguruj:
+- Dane dostępowe do bazy (MySQL)
+- Inne sekrety (np. sekret JWT)
 4. Uruchom serwer:
    ```
    npm start
