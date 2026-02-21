@@ -24,7 +24,7 @@ export const secured = (req: Request, res: Response, next: NextFunction): void =
     } catch (error: any) {
         console.error('Failed verify token:', error.message);
         res.clearCookie('token');
-        return res.redirect('gluecrypt//login');
+        return res.redirect('/gluecrypt/login');
     }
 
     next();
