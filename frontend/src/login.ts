@@ -229,7 +229,7 @@ async function login(): Promise<void> {
 }
 
 async function getMerkleRoot() : Promise<Group> {
-    const response: Response = await fetch('http://localhost:5173/api/zkp/members', {
+    const response: Response = await fetch('http://localhost:3000/api/zkp/members', {
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -251,7 +251,7 @@ async function generateProofs(group : Group, sessionID: string, privateKey: stri
 }
 
 async function authenticateViaProof(proof : object , sessionID : string,): Promise<void> {
-    const authResponse = await fetch('http://localhost:5173/api/zkp/auth/proof', {
+    const authResponse = await fetch('http://localhost:3000/api/zkp/auth/proof', {
         method: 'POST',
         headers: {
             Accept: 'application/json',

@@ -20,20 +20,13 @@ export class ZKP {
         (commitments as {commitment: string}[]).forEach(({ commitment }) => {
             data.push(commitment);
         });
-        console.log(data)
         return data;
     }
 
-    public getGroupSize() : number {
-        return this.group.size;
-    }
 
     public addToGroup(commitment: string) : void {
         this.group.addMember(hexToNumber(commitment));
     }
 
-    public getMerkleProof(id : number) : any {
-         return this.group.generateMerkleProof(id)
-    }
 }
 

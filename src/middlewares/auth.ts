@@ -15,7 +15,7 @@ export const secured = (req: Request, res: Response, next: NextFunction): void =
     const token : string | undefined = req.cookies.token;
     if (!token) {
         console.log('Cookie missing, redirecting /login');
-        return res.redirect('/login');
+        return res.redirect('/gluecrypt/login');
     }
 
     let decoded: JwtPayload;
@@ -24,7 +24,7 @@ export const secured = (req: Request, res: Response, next: NextFunction): void =
     } catch (error: any) {
         console.error('Failed verify token:', error.message);
         res.clearCookie('token');
-        return res.redirect('/login');
+        return res.redirect('gluecrypt//login');
     }
 
     next();

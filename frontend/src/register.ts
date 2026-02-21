@@ -55,7 +55,7 @@ async function register(): Promise<void> {
         const commitment : string  = numberToHexUnpadded(identity.commitment);
         const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,sessionNonceHex);
 
-        const registerResponse = await fetch(`http://localhost:5173/api/zkp/auth/register`, { // CHANGE TO YOUR DOMAIN
+        const registerResponse = await fetch(`http://localhost:3000/api/zkp/auth/register`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

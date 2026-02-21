@@ -52,16 +52,16 @@ if (corsEnabled) {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/gluecrypt/auth/register', (req: Request, res: Response)  => {
-    res.sendFile(path.join(__dirname, 'public', '/dist' ,'register.html'));
+app.get('/gluecrypt/register', (req: Request, res: Response)  => {
+    res.sendFile(path.join(__dirname, 'public' ,'register.html'));
 })
 
-app.get('/gluecrypt/auth/login', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, 'public', '/dist' ,'login.html'));
+app.get('/gluecrypt/login', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, 'public' ,'login.html'));
 })
 
-app.get('/gluecrypt/auth/zkp-info', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, 'public', '/dist' ,'zkp-info.html'));
+app.get('/gluecrypt/zkp-info', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, 'public' ,'zkp-info.html'));
 })
 
 app.get('/gluecrypt', secured ,(req: Request, res: Response) => {
@@ -89,7 +89,7 @@ if (httpsMode) {
 
 } else {
     app.listen(port, () => {
-        console.log(`App running at ${domain}:${port}`);
+        console.log(`App running at ${domain}:${port + "/gluecrypt"}`);
 
     });
 
