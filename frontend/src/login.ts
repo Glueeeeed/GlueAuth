@@ -94,6 +94,10 @@ addEventListener('DOMContentLoaded', () => {
 
     if (decryptBtn && pinInput) {
         decryptBtn.addEventListener("click", async () => {
+            const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
+            loadingSection.hidden = false;
+            const secretNotFound = document.getElementById("secretNotFound") as HTMLDivElement;
+            secretNotFound.hidden = true;
             const pin = pinInput.value;
             const encryptedData : string | null = sessionStorage.getItem("encryptedQrCodeVal");
             if (pin && encryptedData) {
@@ -155,6 +159,8 @@ async function checkIfSecretExists() : Promise<object | null> {
         if (existingKey != undefined && nonceHex != undefined && salt != undefined) {
             return {key: existingKey, salt: salt, nonce: nonceHex};
         } else {
+            const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
+            loadingSection.hidden = true;
             const loginSection = document.getElementById("loginSection") as HTMLDivElement;
             const secretNotFound = document.getElementById("secretNotFound") as HTMLDivElement;
             loginSection.hidden = true;
@@ -180,32 +186,46 @@ async function checkIfQrCodeIsEncrypted(encryptedData : string): Promise<boolean
 }
 
 async function login(): Promise<void> {
-    const sessionData : sessionData =  await getSessionKey();
-    const fingerprint : ThumbmarkResponse =  await getFingerprint();
-    const deviceID : string = localStorage.getItem("DeviceID") as string;
-    const baseKey : string = sessionData.baseKey;
+    try {
+        const loginSection = document.getElementById("loginSection") as HTMLDivElement;
+        loginSection.hidden = true;
+        const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
+        loadingSection.hidden = false;
+        const sessionData : sessionData =  await getSessionKey();
+        const fingerprint : ThumbmarkResponse =  await getFingerprint();
+        const deviceID : string = localStorage.getItem("DeviceID") as string;
+        const baseKey : string = sessionData.baseKey;
 
-    sessionStorage.setItem("fingerprint", fingerprint.thumbmark);
-    sessionStorage.setItem("baseKey", baseKey);
+        sessionStorage.setItem("fingerprint", fingerprint.thumbmark);
+        sessionStorage.setItem("baseKey", baseKey);
 
-    const encryptedSecret : object | null = await checkIfSecretExists();
-    if (encryptedSecret != null) {
-        interface secretStructure {
-            key : string;
-            salt: string;
-            nonce: string;
+        const encryptedSecret : object | null = await checkIfSecretExists();
+        if (encryptedSecret != null) {
+            interface secretStructure {
+                key : string;
+                salt: string;
+                nonce: string;
+            }
+            const secrets = encryptedSecret as secretStructure;
+            const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
+            const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
+            const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, { c: 524288, dkLen: 32 });
+            const secret : string = await decryptAesGcm(secrets.key,bytesToHex(key), secrets.nonce);
+            const merkleRoot : Group = await getMerkleRoot();
+            const proof : SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret);
+            await authenticateViaProof(proof, sessionData.sessionID);
+            window.open('/gluecrypt');
         }
-        const secrets = encryptedSecret as secretStructure;
-        const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
-        const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
-        const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, { c: 524288, dkLen: 32 });
-        const secret : string = await decryptAesGcm(secrets.key,bytesToHex(key), secrets.nonce);
-        const merkleRoot : Group = await getMerkleRoot();
-        const proof : SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret);
-        await authenticateViaProof(proof, sessionData.sessionID);
-    }
 
-    return;
+
+        return;
+    } catch (error) {
+        console.error('Failed to login:', error);
+        const errorMessage = document.getElementById('errorMessage') as HTMLDivElement;
+        errorMessage.hidden = false;
+
+
+    }
 }
 
 async function getMerkleRoot() : Promise<Group> {

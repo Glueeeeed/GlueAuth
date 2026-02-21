@@ -5,7 +5,6 @@ import * as jwtLib from 'jsonwebtoken';
 import {Secrets} from "./keyExchangeController";
 import {deleteSecret} from "../services/keyExchangeService";
 import { verifyProof } from "@semaphore-protocol/proof";
-import db from "../configs/database";
 interface RegisterRequest {
     commitment: string;
     sessionID: string;

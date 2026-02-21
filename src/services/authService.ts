@@ -1,5 +1,4 @@
 import db from '../configs/database';
-import crypto from 'crypto';
 import {zkp} from "../app";
 
 export async function checkIfCommitmentExists(commitment: string): Promise<boolean> {
@@ -11,10 +10,7 @@ export async function checkIfCommitmentExists(commitment: string): Promise<boole
 }
 
 export async function registerCommitment(commitment: string): Promise<void> {
-    const userID = crypto.randomBytes(12).toString('base64');
-    const actualGroup = zkp.getGroupSize();
-
-    await db.query('INSERT INTO commitments ( merkleIndex , userID, commitment) VALUES (?, ?, ?)', [actualGroup,userID, commitment]);
+    await db.query('INSERT INTO commitments ( commitment) VALUES (?)', [ commitment]);
     zkp.addToGroup(commitment);
 }
 

@@ -101,8 +101,29 @@
           </button>
         </div>
       </div>
-      
-      
+
+
+      <div id="loadingSection" hidden >
+        <div class="text-center mb-10">
+          <h1 class="text-3xl font-bold text-[#36382e] mb-4">Trwa logowanie...</h1>
+          <p class="text-lg text-gray-800 leading-relaxed mb-6">To może potrwać kilka sekund, dziękujemy za cierpliwość!</p>
+        </div>
+        <div id="loading" class="flex justify-center" >
+          <svg class="animate-spin h-10 w-10 text-[#36382e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </div>
+
+        <div id="errorMessage" class=" flex flex-col  text-center mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded" hidden>
+          <strong class="font-bold">Wystąpił błąd</strong>
+          <span id="errorMessageContent">Nie udało się zalogować, spróbuj ponownie, jeżeli problem się powtarza to prawdopodobnie leży po naszej stronie :\</span>
+        </div>
+
+      </div>
+
+
+
 
     </div>
   </div>

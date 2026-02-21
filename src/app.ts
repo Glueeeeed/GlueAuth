@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import path from "path";
 import cors from 'cors';
 import {ZKP} from './utils/zkp'
-import {Identity} from "@semaphore-protocol/identity";
+import cookieParser from 'cookie-parser';
 import https from 'https';
 
 
@@ -16,6 +16,7 @@ import {corsEnabled, httpsMode, PORT, domain} from "./configs/settings";
 import keyenchange from "./routes/keyenchange";
 import auth from "./routes/auth";
 import Zkp from "./routes/zkp";
+import {secured} from "./middlewares/auth";
 
 
 // initialize Merkle Tree
@@ -35,6 +36,7 @@ const port : number = PORT;
 
 //Middlewares
 app.use(express.json());
+app.use(cookieParser());
 if (corsEnabled) {
     const corsOptions = {
         origin: domain,
@@ -52,6 +54,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/gluecrypt/auth/register', (req: Request, res: Response)  => {
     res.sendFile(path.join(__dirname, 'public', '/dist' ,'register.html'));
+})
+
+app.get('/gluecrypt/auth/login', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, 'public', '/dist' ,'login.html'));
+})
+
+app.get('/gluecrypt/auth/zkp-info', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, 'public', '/dist' ,'zkp-info.html'));
+})
+
+app.get('/gluecrypt', secured ,(req: Request, res: Response) => {
+    res.send("Ok");
 })
 
 // API endpoints
