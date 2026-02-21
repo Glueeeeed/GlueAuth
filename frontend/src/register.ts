@@ -63,7 +63,7 @@ async function register(): Promise<void> {
             body: JSON.stringify({
                 commitment: encryptedCommitment,
                 sessionID: sessionData.sessionID,
-                nonceHex: nonceHex,
+                nonceHex: sessionNonceHex,
             })
         });
         if (!registerResponse.ok) {
@@ -74,10 +74,22 @@ async function register(): Promise<void> {
         }
 
         if (encryptQRData.checked) {
+            interface qrDataStructure {
+                key : string,
+                encrypted : boolean,
+                salt: string,
+                nonce : string,
+            }
             const pin : string = generatePIN();
             const privateKey : string = bytesToHex(identity.privateKey as Uint8Array);
-            const encryptedData : string =  await encryptQR(privateKey, pin);
-            await generateQR(encryptedData + '||' + 'ENCRYPTED' + '||');
+            const encryptedData  =  await encryptQR(privateKey, pin) as qrDataStructure;
+            const qrData : string = JSON.stringify({
+                key: encryptedData.key,
+                encrypted: true,
+                salt: encryptedData.salt,
+                nonce: encryptedData.nonce,
+            })
+            await generateQR(qrData);
             const pinInfo = document.getElementById("pinInfo") as HTMLDivElement;
             const pinCode = document.getElementById("pinCode") as HTMLSpanElement;
             const qrSection = document.getElementById("qrSection") as HTMLDivElement;
@@ -87,7 +99,11 @@ async function register(): Promise<void> {
             pinCode.textContent = pin;
         } else {
             const privateKey : string = bytesToHex(identity.privateKey as Uint8Array);
-            await generateQR(privateKey);
+            const qrData : string = JSON.stringify({
+                key: privateKey,
+                encrypted: false
+            })
+            await generateQR(qrData);
             const qrSection = document.getElementById("qrSection") as HTMLDivElement;
             generatingSection.hidden = true;
             qrSection.hidden = false;
@@ -147,14 +163,14 @@ function generatePIN(): string {
 }
 
 
-async function encryptQR(privateKey: string, PIN: string): Promise<string> {
+async function encryptQR(privateKey: string, PIN: string): Promise<object> {
     const nonce : Uint8Array<ArrayBufferLike> = randomBytes(12);
-    const nonceHex : string = bytesToHex(nonce);
     const salt : Uint8Array<ArrayBufferLike> = randomBytes(32);
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, PIN, salt, { c: 524288, dkLen: 32 });
     console.log(bytesToHex(key));
-    const encryptedData : string = await encryptAesGcm(privateKey, bytesToHex(key),nonceHex);
-    return encryptedData + "_" + bytesToHex(salt);
+    console.log("Pirvate key " + privateKey)
+    const encryptedData : string = await encryptAesGcm(privateKey, bytesToHex(key),bytesToHex(nonce));
+    return {key: encryptedData, salt: bytesToHex(salt) , nonce: bytesToHex(nonce)};
 }
 
 

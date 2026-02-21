@@ -10,6 +10,7 @@ interface RegisterRequest {
     commitment: string;
     sessionID: string;
     secret: string;
+    nonceHex: string;
 }
 
 interface RegisterResponse {
@@ -25,7 +26,7 @@ interface Credentials {
 
 export const register = async (req: Request<{}, {}, RegisterRequest>, res: Response<RegisterResponse | {error: string}>): Promise<void> => {
     try {
-        const { commitment, sessionID , secret } = req.body;
+        const { commitment, sessionID , secret, nonceHex } = req.body;
 
         if (secret === (Secrets.get(sessionID) || '')) {
             console.log(`Secret for session ID ${sessionID} is correct.`);
@@ -35,7 +36,7 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
             res.status(400).json({ error: 'Missing commitment or sessionID' });
             return;
         }
-        const decryptedCommitment : string =  await decryptAesGcm(commitment, Secrets.get(sessionID) || '');
+        const decryptedCommitment : string =  await decryptAesGcm(commitment, Secrets.get(sessionID) || '', nonceHex);
 
         if (await checkIfCommitmentExists(decryptedCommitment)) {
             res.status(409).json({ error: 'Commitment already exists' });

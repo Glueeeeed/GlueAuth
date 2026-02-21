@@ -95,14 +95,21 @@ addEventListener('DOMContentLoaded', () => {
     if (decryptBtn && pinInput) {
         decryptBtn.addEventListener("click", async () => {
             const pin = pinInput.value;
-            const encryptedData = sessionStorage.getItem("encryptedQrCodeVal");
+            const encryptedData : string | null = sessionStorage.getItem("encryptedQrCodeVal");
             if (pin && encryptedData) {
                 try {
 
-                    // Change extract nonce in qr
+                    interface qrDataStructure {
+                        key : string,
+                        encrypted : boolean,
+                        salt: string,
+                        nonce : string,
+                    }
 
+                    const data = JSON.parse(encryptedData) as qrDataStructure;
+                    console.log(data.key, data.salt, data.nonce)
                     const nonceHex  = bytesToHex(randomBytes(12));
-                    const decryptedKey = await decryptQR(encryptedData, pin);
+                    const decryptedKey = await decryptQR(data.key, pin, data.nonce, data.salt);
                     await securePrivateKey(
                         sessionStorage.getItem("fingerprint") as string,
                         decryptedKey,
@@ -161,11 +168,15 @@ async function checkIfSecretExists() : Promise<object | null> {
 }
 
 async function checkIfQrCodeIsEncrypted(encryptedData : string): Promise<boolean> {
-    const encryptTag: string = encryptedData.slice(-13);
-    if (encryptTag === "||ENCRYPTED||") {
-        return true;
+    interface qrDataStructure {
+        key : string,
+        encrypted : boolean,
+        salt: string,
+        nonce : string,
     }
-    return false;
+    const data  = JSON.parse(encryptedData) as qrDataStructure;
+    return data.encrypted;
+
 }
 
 async function login(): Promise<void> {
@@ -174,7 +185,7 @@ async function login(): Promise<void> {
     const deviceID : string = localStorage.getItem("DeviceID") as string;
     const baseKey : string = sessionData.baseKey;
 
-    sessionStorage.setItem("fingerprint", deviceID);
+    sessionStorage.setItem("fingerprint", fingerprint.thumbmark);
     sessionStorage.setItem("baseKey", baseKey);
 
     const encryptedSecret : object | null = await checkIfSecretExists();
@@ -182,13 +193,13 @@ async function login(): Promise<void> {
         interface secretStructure {
             key : string;
             salt: string;
-            nonceHex: string;
+            nonce: string;
         }
         const secrets = encryptedSecret as secretStructure;
         const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
         const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
         const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, { c: 524288, dkLen: 32 });
-        const secret : string = await decryptAesGcm(secrets.key,bytesToHex(key), secrets.nonceHex);
+        const secret : string = await decryptAesGcm(secrets.key,bytesToHex(key), secrets.nonce);
         const merkleRoot : Group = await getMerkleRoot();
         const proof : SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret);
         await authenticateViaProof(proof, sessionData.sessionID);
