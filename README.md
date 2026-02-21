@@ -67,7 +67,7 @@ CREATE TABLE `commitments` (
 CREATE TABLE `nullifier_history` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `nullifier` VARCHAR(66) UNIQUE NOT NULL,
-  `use_date` DATETIME NOT NULL
+  `use_date` VARCHAR(100) NOT NULL
 );
 ```
 
@@ -142,7 +142,7 @@ CREATE TABLE `commitments` (
 CREATE TABLE `nullifier_history` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `nullifier` VARCHAR(66) UNIQUE NOT NULL,
-  `use_date` DATETIME NOT NULL
+  `use_date` VARCHAR(100) NOT NULL
 );
 ```
 
