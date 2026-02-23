@@ -73,6 +73,7 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
         }
 
         const isValid = verifyProof(zkp);
+
         if (!isValid) {
             res.status(401).json({ error: 'Invalid proof' });
         }

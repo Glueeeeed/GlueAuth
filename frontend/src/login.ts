@@ -45,7 +45,9 @@ addEventListener('DOMContentLoaded', () => {
                         decryptSection.hidden = false;
                     } else {
                         const nonceHex  = bytesToHex(randomBytes(12));
-                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, qrData, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex);
+                        const data = JSON.parse(qrData);
+                        console.log(data.key)
+                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex);
                         login();
                     }
                 } catch (error) {
@@ -74,7 +76,8 @@ addEventListener('DOMContentLoaded', () => {
                     decryptSection.hidden = false;
                 } else {
                     const nonceHex  = bytesToHex(randomBytes(12));
-                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, result, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex);
+                    const data = JSON.parse(result);
+                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex);
                     login();
                 }
             });
