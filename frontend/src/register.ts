@@ -41,6 +41,8 @@ export interface sessionData {
 
 async function register(): Promise<void> {
     try {
+        const uuid = crypto.randomUUID();
+        const userID = uuid.replace(/-/g, '').slice(0, 31);
         const nonceHex : string = bytesToHex(randomBytes(12));
         const sessionNonceHex : string = bytesToHex(randomBytes(12));
         const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
@@ -50,7 +52,7 @@ async function register(): Promise<void> {
         const fingerprintData : ThumbmarkResponse = await getFingerprint();
         const deviceID = localStorage.getItem('DeviceID') as string;
         const privateKey = bytesToHex(identity.privateKey as Uint8Array);
-        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, nonceHex);
+        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, nonceHex, userID);
         const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
         const commitment : string  = numberToHexUnpadded(identity.commitment);
         const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,sessionNonceHex);
@@ -79,6 +81,7 @@ async function register(): Promise<void> {
                 encrypted : boolean,
                 salt: string,
                 nonce : string,
+                uuid : string,
             }
             const pin : string = generatePIN();
             const privateKey : string = bytesToHex(identity.privateKey as Uint8Array);
@@ -88,6 +91,7 @@ async function register(): Promise<void> {
                 encrypted: true,
                 salt: encryptedData.salt,
                 nonce: encryptedData.nonce,
+                uuid: userID
             })
             await generateQR(qrData);
             const pinInfo = document.getElementById("pinInfo") as HTMLDivElement;
@@ -101,7 +105,8 @@ async function register(): Promise<void> {
             const privateKey : string = bytesToHex(identity.privateKey as Uint8Array);
             const qrData : string = JSON.stringify({
                 key: privateKey,
-                encrypted: false
+                encrypted: false,
+                uuid : userID
             })
             await generateQR(qrData);
             const qrSection = document.getElementById("qrSection") as HTMLDivElement;
@@ -167,8 +172,6 @@ async function encryptQR(privateKey: string, PIN: string): Promise<object> {
     const nonce : Uint8Array<ArrayBufferLike> = randomBytes(12);
     const salt : Uint8Array<ArrayBufferLike> = randomBytes(32);
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, PIN, salt, { c: 524288, dkLen: 32 });
-    console.log(bytesToHex(key));
-    console.log("Pirvate key " + privateKey)
     const encryptedData : string = await encryptAesGcm(privateKey, bytesToHex(key),bytesToHex(nonce));
     return {key: encryptedData, salt: bytesToHex(salt) , nonce: bytesToHex(nonce)};
 }

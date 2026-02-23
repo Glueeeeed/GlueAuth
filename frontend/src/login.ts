@@ -1,7 +1,8 @@
 import {openDB} from "idb";
-import {decryptAesGcm, getFingerprint, getSessionKey, scanQRCode, securePrivateKey, startCameraScan, verifyDeviceID} from "./utils.ts";
+import {decryptAesGcm, getFingerprint, getSessionKey, scanQRCode, securePrivateKey, startCameraScan, verifyDeviceID}from "./utils.ts";
 import type {sessionData} from "./register.ts";
-import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";import {bytesToHex, hexToBytes, randomBytes} from "@noble/ciphers/utils.js";
+import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
+import {bytesToHex, hexToBytes, randomBytes} from "@noble/ciphers/utils.js";
 import {pbkdf2} from "@noble/hashes/pbkdf2.js";
 import {sha256} from "@noble/hashes/sha2.js";
 import QrScanner from 'qr-scanner';
@@ -46,8 +47,7 @@ addEventListener('DOMContentLoaded', () => {
                     } else {
                         const nonceHex  = bytesToHex(randomBytes(12));
                         const data = JSON.parse(qrData);
-                        console.log(data.key)
-                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex);
+                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex, data.uuid);
                         login();
                     }
                 } catch (error) {
@@ -77,7 +77,7 @@ addEventListener('DOMContentLoaded', () => {
                 } else {
                     const nonceHex  = bytesToHex(randomBytes(12));
                     const data = JSON.parse(result);
-                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex);
+                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex, data.uuid);
                     login();
                 }
             });
@@ -111,10 +111,10 @@ addEventListener('DOMContentLoaded', () => {
                         encrypted : boolean,
                         salt: string,
                         nonce : string,
+                        uuid : string,
                     }
 
                     const data = JSON.parse(encryptedData) as qrDataStructure;
-                    console.log(data.key, data.salt, data.nonce)
                     const nonceHex  = bytesToHex(randomBytes(12));
                     const decryptedKey = await decryptQR(data.key, pin, data.nonce, data.salt);
                     await securePrivateKey(
@@ -122,7 +122,8 @@ addEventListener('DOMContentLoaded', () => {
                         decryptedKey,
                         localStorage.getItem("DeviceID") as string,
                         sessionStorage.getItem("baseKey") as string,
-                        nonceHex as string
+                        nonceHex as string,
+                        data.uuid
                     );
                     const decryptSection = document.getElementById("decryptSection") as HTMLDivElement;
                     decryptSection.hidden = true;
@@ -159,8 +160,9 @@ async function checkIfSecretExists() : Promise<object | null> {
         const existingKey : string = await db.get('secrets', 'privateKey');
         const salt : string = await db.get('secrets', 'salt');
         const nonceHex : string = await db.get('secrets', 'nonceHex');
+        const uuid : string = await db.get('secrets', 'uuid');
         if (existingKey != undefined && nonceHex != undefined && salt != undefined) {
-            return {key: existingKey, salt: salt, nonce: nonceHex};
+            return {key: existingKey, salt: salt, nonce: nonceHex, uuid: uuid};
         } else {
             const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
             loadingSection.hidden = true;
@@ -194,6 +196,8 @@ async function login(): Promise<void> {
         loginSection.hidden = true;
         const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
         loadingSection.hidden = false;
+        const secretNotFound  =  document.getElementById("secretNotFound") as HTMLDivElement;
+        secretNotFound.hidden = true;
         const sessionData : sessionData =  await getSessionKey();
         const fingerprint : ThumbmarkResponse =  await getFingerprint();
         const deviceID : string = localStorage.getItem("DeviceID") as string;
@@ -208,14 +212,16 @@ async function login(): Promise<void> {
                 key : string;
                 salt: string;
                 nonce: string;
+                uuid : string;
             }
             const secrets = encryptedSecret as secretStructure;
             const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
             const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
             const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, { c: 524288, dkLen: 32 });
             const secret : string = await decryptAesGcm(secrets.key,bytesToHex(key), secrets.nonce);
+            const uuid : string = await decryptAesGcm(secrets.uuid, bytesToHex(key), secrets.nonce);
             const merkleRoot : Group = await getMerkleRoot();
-            const proof : SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret);
+            const proof : SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret, uuid);
             await authenticateViaProof(proof, sessionData.sessionID);
             window.open('/gluecrypt');
         }
@@ -225,7 +231,9 @@ async function login(): Promise<void> {
     } catch (error) {
         console.error('Failed to login:', error);
         const errorMessage = document.getElementById('errorMessage') as HTMLDivElement;
+        const loading = document.getElementById('loading') as HTMLDivElement;
         errorMessage.hidden = false;
+        loading.hidden = true;
 
 
     }
@@ -246,11 +254,10 @@ async function getMerkleRoot() : Promise<Group> {
 }
 
 
-async function generateProofs(group : Group, sessionID: string, privateKey: string) {
+async function generateProofs(group : Group, sessionID: string, privateKey: string, uuid: string) {
     const identity = new Identity(hexToBytes(privateKey));
     const scope : string = sessionID;
-    const message = "GlueAuth"
-    return await generateProof(identity, group, message, scope);
+    return await generateProof(identity, group, uuid, scope);
 }
 
 async function authenticateViaProof(proof : object , sessionID : string,): Promise<void> {

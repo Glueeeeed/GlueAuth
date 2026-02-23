@@ -80,7 +80,7 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
 
         await registerNullifier(zkp.nullifier);
         const token= jwtLib.sign(
-            {nullifier: zkp.nullifier},
+            {userID: zkp.message},
             process.env.SESSION_SECRET_JWT as string,
             {expiresIn: '15m'}
         );
