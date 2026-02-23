@@ -253,7 +253,6 @@ async function getMerkleRoot() : Promise<Group> {
     return group;
 }
 
-
 async function generateProofs(group : Group, sessionID: string, privateKey: string, uuid: string) {
     const identity = new Identity(hexToBytes(privateKey));
     const scope : string = sessionID;
