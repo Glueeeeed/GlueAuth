@@ -61,12 +61,12 @@ GlueAuth is a decentralized authentication system leveraging Zero-Knowledge Proo
 ```sql
 CREATE TABLE `commitments` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `commitment` VARCHAR(66) UNIQUE NOT NULL
+  `commitment` VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE `nullifier_history` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `nullifier` VARCHAR(66) UNIQUE NOT NULL,
+  `nullifier` VARCHAR(255) UNIQUE NOT NULL,
   `use_date` VARCHAR(100) NOT NULL
 );
 ```
