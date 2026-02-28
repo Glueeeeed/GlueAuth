@@ -1,6 +1,6 @@
 import { Group } from "@semaphore-protocol/group"
 import {hexToNumber, numberToHexUnpadded} from "@noble/curves/utils.js";
-import db from "../configs/database";
+import db from "../config/database";
 import {zkp} from "../app";
 
 export class ZKP {

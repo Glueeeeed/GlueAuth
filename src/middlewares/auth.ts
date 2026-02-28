@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv'
-dotenv.config({ path: './src/configs/secrets.env' })
+dotenv.config({ path: './src/config/secrets.env' })
 import jwt from 'jsonwebtoken';
 
 interface JwtPayload {

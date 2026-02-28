@@ -12,6 +12,12 @@ import {generateProof} from "@semaphore-protocol/proof"
 import {hexToNumber} from "@noble/curves/utils.js";
 import type {SemaphoreProof} from "@semaphore-protocol/core";
 
+interface secretStructure {
+    key : string;
+    salt: string;
+    nonce: string;
+    uuid : string;
+}
 
 addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById("loginBtn") as HTMLButtonElement;
@@ -142,6 +148,27 @@ addEventListener('DOMContentLoaded', () => {
 
     verifyDeviceID();
 });
+
+async function resetKey() {
+    try {
+        const db = await openDB('gluecrypt', 2, {
+            upgrade(db) {
+                if (!db.objectStoreNames.contains('secrets')) {
+                    db.createObjectStore('secrets');
+                }
+            }
+        });
+        await db.delete('secrets', 'privateKey');
+        await db.delete('secrets',  'salt');
+        await db.delete('secrets',  'nonceHex');
+        await db.delete('secrets',  'uuid');
+        console.log('Deleted keys from DB');
+    } catch (error) {
+        console.error('Failed to save:', error);
+        return null;
+    }
+}
+
 async function decryptQR(encryptedData: string, PIN: string, nonceHex : string, salt : string): Promise<string> {
     const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(salt);
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, PIN, saltBytes, { c: 524288, dkLen: 32 });
@@ -174,6 +201,7 @@ async function checkIfSecretExists() : Promise<object | null> {
         }
     } catch (error) {
         console.error('Failed to save:', error);
+         await resetKey();
          return null;
     }
 }
@@ -208,22 +236,20 @@ async function login(): Promise<void> {
 
         const encryptedSecret : object | null = await checkIfSecretExists();
         if (encryptedSecret != null) {
-            interface secretStructure {
-                key : string;
-                salt: string;
-                nonce: string;
-                uuid : string;
+            try {
+                const secrets = encryptedSecret as secretStructure;
+                const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
+                const saltBytes: Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
+                const key: Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, {c: 524288, dkLen: 32});
+                const secret: string = await decryptAesGcm(secrets.key, bytesToHex(key), secrets.nonce);
+                const uuid: string = await decryptAesGcm(secrets.uuid, bytesToHex(key), secrets.nonce);
+                const merkleRoot: Group = await getMerkleRoot();
+                const proof: SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret, uuid);
+                await authenticateViaProof(proof, sessionData.sessionID);
+                window.open('/gluecrypt');
+            } catch (error) {
+                await resetKey();
             }
-            const secrets = encryptedSecret as secretStructure;
-            const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
-            const saltBytes : Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
-            const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, { c: 524288, dkLen: 32 });
-            const secret : string = await decryptAesGcm(secrets.key,bytesToHex(key), secrets.nonce);
-            const uuid : string = await decryptAesGcm(secrets.uuid, bytesToHex(key), secrets.nonce);
-            const merkleRoot : Group = await getMerkleRoot();
-            const proof : SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret, uuid);
-            await authenticateViaProof(proof, sessionData.sessionID);
-            window.open('/gluecrypt');
         }
 
 

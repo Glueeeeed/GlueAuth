@@ -9,7 +9,7 @@ import https from 'https';
 //Uncomment when httpsMode is enabled
 // import {options} from "./config/ssl";
 
-import {corsEnabled, httpsMode, PORT, domain} from "./configs/settings";
+import {corsEnabled, httpsMode, PORT, domain} from "./config/settings";
 
 // Import Routes
 

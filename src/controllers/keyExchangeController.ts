@@ -10,8 +10,8 @@
 import dotenv from 'dotenv';
 import {Request, Response} from "express";
 import crypto from "crypto";
-import {computeSharedSecret, deleteSecret, generateKeyPair} from "../services/keyExchangeService";
-dotenv.config({ path: './src/configs/secrets.env' })
+import {computeSharedSecret, generateKeyPair} from "../services/keyExchangeService";
+dotenv.config({ path: './src/config/secrets.env' })
 
 
 interface KeyExchangeRequest {

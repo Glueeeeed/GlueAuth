@@ -1,4 +1,4 @@
-import db from '../configs/database';
+import db from '../config/database';
 import {zkp} from "../app";
 
 export async function checkIfCommitmentExists(commitment: string): Promise<boolean> {
