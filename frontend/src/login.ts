@@ -246,7 +246,7 @@ async function login(): Promise<void> {
                 const merkleRoot: Group = await getMerkleRoot();
                 const proof: SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret, uuid);
                 await authenticateViaProof(proof, sessionData.sessionID);
-                window.open('/gluecrypt');
+                window.location.href = ('/gluecrypt');
             } catch (error) {
                 await resetKey();
             }
