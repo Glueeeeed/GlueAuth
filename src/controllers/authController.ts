@@ -31,20 +31,23 @@ interface Credentials {
 
 
 export const register = async (req: Request<{}, {}, RegisterRequest>, res: Response<RegisterResponse | {error: string}>): Promise<void> => {
+    const { commitment, sessionID , secret, nonceHex } = req.body;
     try {
-        const { commitment, sessionID , secret, nonceHex } = req.body;
+
 
         if (secret === (Secrets.get(sessionID) || '')) {
             console.log(`Secret for session ID ${sessionID} is correct.`);
         }
 
         if (!commitment || !sessionID) {
+            deleteSecret(sessionID);
             res.status(400).json({ error: 'Missing commitment or sessionID' });
             return;
         }
         const decryptedCommitment : string =  await decryptAesGcm(commitment, Secrets.get(sessionID) || '', nonceHex);
 
         if (await checkIfCommitmentExists(decryptedCommitment)) {
+            deleteSecret(sessionID);
             res.status(409).json({ error: 'Commitment already exists' });
         }
 
@@ -53,6 +56,7 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
         deleteSecret(sessionID);
     } catch (error) {
         console.log(error);
+        deleteSecret(sessionID);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 
@@ -60,21 +64,26 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
 }
 
 export const login = async (req: Request<{}, {}, Credentials>, res: Response<RegisterResponse | {error: string}>): Promise<void> => {
+    const { zkp , sessionID } = req.body;
     try {
-        const { zkp , sessionID } = req.body;
 
         if (!zkp || !sessionID) {
+            if (sessionID) {
+                deleteSecret(sessionID);
+            }
             res.status(400).json({ error: 'Missing zkp  or sessionID' });
         }
 
         const nullifierExists : boolean = await checkIfNullifierExists(zkp.nullifier);
         if (nullifierExists) {
+            deleteSecret(sessionID);
             res.status(400).json({ error: 'Nullifier already exists' });
         }
 
         const isValid = verifyProof(zkp);
 
         if (!isValid) {
+            deleteSecret(sessionID);
             res.status(401).json({ error: 'Invalid proof' });
         }
 
@@ -88,7 +97,7 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
         res.cookie('token', token, {
             maxAge: 60 * 60 * 1000,
             httpOnly: true,
-            secure: false,
+            secure: false , // Set to true in production with HTTPS
             sameSite: 'lax',
             path: '/'
         });
@@ -100,6 +109,7 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
 
     } catch (error) {
         console.log(error);
+        deleteSecret(sessionID);
         res.status(500).json({error: "Internal Server Error"})
     }
 }

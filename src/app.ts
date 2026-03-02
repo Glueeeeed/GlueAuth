@@ -3,7 +3,16 @@ import path from "path";
 import cors from 'cors';
 import {ZKP} from './utils/zkp'
 import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
 import https from 'https';
+
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: "Too many request."
+});
+
 
 
 //Uncomment when httpsMode is enabled
@@ -70,9 +79,9 @@ app.get('/gluecrypt', secured ,(req: Request, res: Response) => {
 
 // API endpoints
 
-app.use('/api', keyenchange);
-app.use('/api/zkp/auth', auth);
-app.use('/api/zkp', Zkp)
+app.use('/api', limiter, keyenchange);
+app.use('/api/zkp/auth', limiter, auth);
+app.use('/api/zkp', limiter, Zkp)
 
 
 
