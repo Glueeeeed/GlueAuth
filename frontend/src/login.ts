@@ -255,6 +255,7 @@ async function login(): Promise<void> {
 
         return;
     } catch (error) {
+        await resetKey();
         console.error('Failed to login:', error);
         const errorMessage = document.getElementById('errorMessage') as HTMLDivElement;
         const loading = document.getElementById('loading') as HTMLDivElement;
@@ -298,8 +299,9 @@ async function authenticateViaProof(proof : object , sessionID : string,): Promi
         }),
     })
 
-    if (authResponse.status === 200) {
-        alert('Pomyślnie zalogowano');
+    if (authResponse.ok) {
+        console.log("Authenticated successfully");
     }
+
 }
 
