@@ -1,5 +1,8 @@
 import {openDB} from "idb";
-import {decryptAesGcm, getFingerprint, getSessionKey, scanQRCode, securePrivateKey, startCameraScan, verifyDeviceID}from "./utils.ts";
+import {
+    decryptAesGcm, getFingerprint, getSessionKey, scanQRCode, securePrivateKey,
+    showError, startCameraScan, verifyDeviceID
+} from "./utils.ts";
 import type {sessionData} from "./register.ts";
 import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
 import {bytesToHex, hexToBytes, randomBytes} from "@noble/ciphers/utils.js";
@@ -105,6 +108,8 @@ addEventListener('DOMContentLoaded', () => {
         decryptBtn.addEventListener("click", async () => {
             const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
             loadingSection.hidden = false;
+            const back = document.getElementById("back") as HTMLDivElement;
+            back.hidden = true;
             const secretNotFound = document.getElementById("secretNotFound") as HTMLDivElement;
             secretNotFound.hidden = true;
             const pin = pinInput.value;
@@ -193,6 +198,8 @@ async function checkIfSecretExists() : Promise<object | null> {
         } else {
             const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
             loadingSection.hidden = true;
+            const back = document.getElementById("back") as HTMLDivElement;
+            back.hidden = true;
             const loginSection = document.getElementById("loginSection") as HTMLDivElement;
             const secretNotFound = document.getElementById("secretNotFound") as HTMLDivElement;
             loginSection.hidden = true;
@@ -223,6 +230,8 @@ async function login(): Promise<void> {
         const loginSection = document.getElementById("loginSection") as HTMLDivElement;
         loginSection.hidden = true;
         const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
+        const back = document.getElementById("back") as HTMLDivElement;
+        back.hidden = true;
         loadingSection.hidden = false;
         const secretNotFound  =  document.getElementById("secretNotFound") as HTMLDivElement;
         secretNotFound.hidden = true;
@@ -248,6 +257,7 @@ async function login(): Promise<void> {
                 await authenticateViaProof(proof, sessionData.sessionID);
                 window.location.href = ('/gluecrypt');
             } catch (error) {
+                showError();
                 await resetKey();
             }
         }
@@ -256,11 +266,8 @@ async function login(): Promise<void> {
         return;
     } catch (error) {
         await resetKey();
+        showError();
         console.error('Failed to login:', error);
-        const errorMessage = document.getElementById('errorMessage') as HTMLDivElement;
-        const loading = document.getElementById('loading') as HTMLDivElement;
-        errorMessage.hidden = false;
-        loading.hidden = true;
 
 
     }

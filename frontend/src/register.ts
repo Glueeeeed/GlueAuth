@@ -5,7 +5,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 import { pbkdf2 } from '@noble/hashes/pbkdf2.js';
 import {Identity} from "@semaphore-protocol/core";
 import {numberToHexUnpadded} from "@noble/curves/utils.js";
-import {getSessionKey, verifyDeviceID, encryptAesGcm, getFingerprint, securePrivateKey} from "./utils.ts";
+import {getSessionKey, verifyDeviceID, encryptAesGcm, getFingerprint, securePrivateKey, showError} from "./utils.ts";
 
 const registerBtn = document.getElementById("registerBtn") as HTMLButtonElement;
 const understandBtn = document.getElementById("understandBtn") as HTMLButtonElement;
@@ -47,6 +47,8 @@ async function register(): Promise<void> {
         const sessionNonceHex : string = bytesToHex(randomBytes(12));
         const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
         generatingSection.hidden = false;
+        const back = document.getElementById("back") as HTMLDivElement;
+        back.hidden = true;
         const sessionData : sessionData = await getSessionKey();
         const identity = new Identity();
         const fingerprintData : ThumbmarkResponse = await getFingerprint();
@@ -57,7 +59,7 @@ async function register(): Promise<void> {
         const commitment : string  = numberToHexUnpadded(identity.commitment);
         const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,sessionNonceHex);
 
-        const registerResponse = await fetch(`http://localhost:3000/api/zkp/auth/register`, { // CHANGE TO YOUR DOMAIN
+        const registerResponse = await fetch(`http://localhost:3000/apizkp/auth/register`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -114,11 +116,7 @@ async function register(): Promise<void> {
             qrSection.hidden = false;
         }
     } catch (error) {
-        console.error("Error during registration process:", error);
-        const loading = document.getElementById("loading") as HTMLDivElement;
-        loading.hidden = true;
-        const errorSection = document.getElementById("errorMessage") as HTMLDivElement;
-        errorSection.hidden = false;
+        showError();
     }
 
 

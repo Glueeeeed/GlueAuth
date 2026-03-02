@@ -44,6 +44,15 @@ export function verifyDeviceID() {
     }
 }
 
+export function showError() {
+    const loading = document.getElementById("loading") as HTMLDivElement;
+    const errorMessage = document.getElementById("errorMessage") as HTMLParagraphElement;
+    const back = document.getElementById("back") as HTMLDivElement;
+    back.hidden = false;
+    loading.hidden = true;
+    errorMessage.hidden = false;
+}
+
 export async function encryptAesGcm(plainText : string, keyHex : string, nonceHex : string) : Promise<string> {
     const nonce : Uint8Array<ArrayBufferLike> = hexToBytes(nonceHex);
     const key : Uint8Array<ArrayBufferLike> = hexToBytes(keyHex);
