@@ -7,7 +7,7 @@ export class ZKP {
     private group = new Group();
 
     public async initializeGroup() : Promise<void> {
-        const [commitments] = await db.query('SELECT commitment FROM commitments');
+        const [commitments] = await db.execute('SELECT commitment FROM commitments');
         (commitments as {commitment: string}[]).forEach(({ commitment }) => {
             this.addToGroup(commitment);
         });
@@ -16,7 +16,7 @@ export class ZKP {
     public async getGroup() : Promise<string[]> {
 
         let data: string[] = [];
-        const [commitments] = await db.query('SELECT commitment FROM commitments');
+        const [commitments] = await db.execute('SELECT commitment FROM commitments');
         (commitments as {commitment: string}[]).forEach(({ commitment }) => {
             data.push(commitment);
         });

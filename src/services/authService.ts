@@ -2,7 +2,7 @@ import db from '../config/database';
 import {zkp} from "../app";
 
 export async function checkIfCommitmentExists(commitment: string): Promise<boolean> {
-    const [rows] = await db.query('SELECT * FROM commitments WHERE commitment = ?', [ commitment]);
+    const [rows] = await db.execute('SELECT * FROM commitments WHERE commitment = ?', [ commitment]);
     if ((rows as object[]).length > 0) {
         return true;
     }
@@ -10,12 +10,12 @@ export async function checkIfCommitmentExists(commitment: string): Promise<boole
 }
 
 export async function registerCommitment(commitment: string): Promise<void> {
-    await db.query('INSERT INTO commitments ( commitment) VALUES (?)', [ commitment]);
+    await db.execute('INSERT INTO commitments ( commitment) VALUES (?)', [ commitment]);
     zkp.addToGroup(commitment);
 }
 
 export async function checkIfNullifierExists(nullifier: string): Promise<boolean> {
-    const [rows] = await db.query('SELECT * FROM nullifier_history WHERE nullifier = ?', [ nullifier]);
+    const [rows] = await db.execute('SELECT * FROM nullifier_history WHERE nullifier = ?', [ nullifier]);
     if ((rows as object[]).length > 0) {
         return true;
     }
