@@ -5,7 +5,7 @@ import {
 } from "./utils.ts";
 import type {sessionData} from "./register.ts";
 import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
-import {bytesToHex, hexToBytes, randomBytes} from "@noble/ciphers/utils.js";
+import {bytesToHex, hexToBytes} from "@noble/ciphers/utils.js";
 import {pbkdf2} from "@noble/hashes/pbkdf2.js";
 import {sha256} from "@noble/hashes/sha2.js";
 import QrScanner from 'qr-scanner';
@@ -18,7 +18,8 @@ import type {SemaphoreProof} from "@semaphore-protocol/core";
 interface secretStructure {
     key : string;
     salt: string;
-    nonce: string;
+    privateKeyNonce: string;
+    uuidNonce: string;
     uuid : string;
 }
 
@@ -54,9 +55,8 @@ addEventListener('DOMContentLoaded', () => {
                         notFoundSection.hidden = true;
                         decryptSection.hidden = false;
                     } else {
-                        const nonceHex  = bytesToHex(randomBytes(12));
                         const data = JSON.parse(qrData);
-                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex, data.uuid);
+                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string, data.uuid);
                         login();
                     }
                 } catch (error) {
@@ -84,9 +84,8 @@ addEventListener('DOMContentLoaded', () => {
                     notFoundSection.hidden = true;
                     decryptSection.hidden = false;
                 } else {
-                    const nonceHex  = bytesToHex(randomBytes(12));
                     const data = JSON.parse(result);
-                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex, data.uuid);
+                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string, data.uuid);
                     login();
                 }
             });
@@ -126,14 +125,12 @@ addEventListener('DOMContentLoaded', () => {
                     }
 
                     const data = JSON.parse(encryptedData) as qrDataStructure;
-                    const nonceHex  = bytesToHex(randomBytes(12));
                     const decryptedKey = await decryptQR(data.key, pin, data.nonce, data.salt);
                     await securePrivateKey(
                         sessionStorage.getItem("fingerprint") as string,
                         decryptedKey,
                         localStorage.getItem("DeviceID") as string,
                         sessionStorage.getItem("baseKey") as string,
-                        nonceHex as string,
                         data.uuid
                     );
                     const decryptSection = document.getElementById("decryptSection") as HTMLDivElement;
@@ -165,7 +162,8 @@ async function resetKey() {
         });
         await db.delete('secrets', 'privateKey');
         await db.delete('secrets',  'salt');
-        await db.delete('secrets',  'nonceHex');
+        await db.delete('secrets', 'privateKeyNonce');
+        await db.delete('secrets', 'uuidNonce');
         await db.delete('secrets',  'uuid');
         console.log('Deleted keys from DB');
     } catch (error) {
@@ -191,10 +189,11 @@ async function checkIfSecretExists() : Promise<object | null> {
         });
         const existingKey : string = await db.get('secrets', 'privateKey');
         const salt : string = await db.get('secrets', 'salt');
-        const nonceHex : string = await db.get('secrets', 'nonceHex');
+        const privateKeyNonce : string = await db.get('secrets', 'privateKeyNonce');
+        const uuidNonce : string = await db.get('secrets', 'uuidNonce');
         const uuid : string = await db.get('secrets', 'uuid');
-        if (existingKey != undefined && nonceHex != undefined && salt != undefined) {
-            return {key: existingKey, salt: salt, nonce: nonceHex, uuid: uuid};
+        if (existingKey != undefined && privateKeyNonce != undefined && salt != undefined && uuidNonce != undefined) {
+            return {key: existingKey, salt: salt, privateKeyNonce: privateKeyNonce, uuidNonce: uuidNonce, uuid: uuid};
         } else {
             const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
             loadingSection.hidden = true;
@@ -250,13 +249,14 @@ async function login(): Promise<void> {
                 const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
                 const saltBytes: Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
                 const key: Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, {c: 524288, dkLen: 32});
-                const secret: string = await decryptAesGcm(secrets.key, bytesToHex(key), secrets.nonce);
-                const uuid: string = await decryptAesGcm(secrets.uuid, bytesToHex(key), secrets.nonce);
+                const secret: string = await decryptAesGcm(secrets.key, bytesToHex(key), secrets.privateKeyNonce);
+                const uuid: string = await decryptAesGcm(secrets.uuid, bytesToHex(key), secrets.uuidNonce);
                 const merkleRoot: Group = await getMerkleRoot();
                 const proof: SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret, uuid);
                 await authenticateViaProof(proof, sessionData.sessionID);
                 window.location.href = ('/gluecrypt');
             } catch (error) {
+                console.error(error);
                 showError();
                 await resetKey();
             }
