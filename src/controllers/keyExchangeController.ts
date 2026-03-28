@@ -41,7 +41,7 @@ export const  keyExchange = async (req: Request<{}, {}, KeyExchangeRequest>, res
         const sessionID : string = crypto.randomBytes(10).toString('base64');
         const serverKeyHex : string = Buffer.from(serverKeyPair.public).toString('hex');
         Secrets.set(sessionID, sharedSecret.sharedSecret);
-        res.status(200).json({ serverPublicKey: serverKeyHex, sessionID: sessionID, baseKey: process.env.baseKey || '' });
+        res.status(200).json({ serverPublicKey: serverKeyHex, sessionID: sessionID, baseKey: process.env.BASEKEY || '' });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });

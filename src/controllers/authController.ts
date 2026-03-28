@@ -104,7 +104,7 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
 
         await registerNullifier(zkp.nullifier);
         const token= jwtLib.sign(
-            {userID: zkp.message.slice(0,16), baseKey: process.env.baseKey},
+            {userID: zkp.message.slice(0,16), baseKey: process.env.BASEKEY},
             process.env.SESSION_SECRET_JWT as string,
             {expiresIn: '15m'}
         );

@@ -16,10 +16,10 @@ interface PoolConfig {
 
 
 const db = mysql.createPool({
-    host: process.env.dbHost,
-    user: process.env.dbUser,
-    password: process.env.dbPassword,
-    database: process.env.dbName,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
