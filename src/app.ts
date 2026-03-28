@@ -8,15 +8,13 @@ import https from 'https';
 
 
 //Uncomment when httpsMode is enabled
-import {options} from "./config/ssl";
+// import {options} from "./config/ssl";
 
 import {corsEnabled, httpsMode, PORT, domain} from "./config/settings";
 
 // Import Routes
 
-import keyenchange from "./routes/keyenchange";
 import auth from "./routes/auth";
-import Zkp from "./routes/zkp";
 import {secured} from "./middlewares/auth";
 
 
@@ -32,7 +30,7 @@ const port : number = PORT;
 
 //Uncomment when httpsMode is enabled
 
-const ssl = options
+// const ssl = options
 
 
 //Middlewares
@@ -70,10 +68,7 @@ app.get('/gluecrypt', secured ,(req: Request, res: Response) => {
 })
 
 // API endpoints
-
-app.use('/api', keyenchange);
-app.use('/api/auth', auth);
-app.use('/api/zkp', Zkp)
+app.use('/api/auth/', auth);
 
 
 
@@ -82,20 +77,20 @@ app.use('/api/zkp', Zkp)
 
 if (httpsMode) {
 
-    https.createServer(ssl, app).listen(port, "0.0.0.0", () => {
-
-        console.log(`App running at ${domain}:${port}`);
-
-    });
+    // https.createServer(ssl, app).listen(port, "0.0.0.0", () => {
+    //
+    //     console.log(`App running at ${domain}:${port}`);
+    //
+    // });
 
 } else {
 
      // Uncomment when https is disabled
 
-    // app.listen(port, () => {
-    //     console.log(`App running at ${domain}:${port + "/gluecrypt"}`);
-    //
-    // });
+    app.listen(port, () => {
+        console.log(`App running at ${"http://" + domain}:${port + "/gluecrypt"}`);
+
+    });
 
 }
 

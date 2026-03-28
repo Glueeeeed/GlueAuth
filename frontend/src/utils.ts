@@ -14,7 +14,7 @@ export async function getSessionKey() : Promise<sessionData> {
         const clientKeyPair : {secretKey: Uint8Array<ArrayBufferLike>, publicKey: Uint8Array<ArrayBufferLike>}    = x25519.keygen();
         const clientPublicKeyHex : Uint8Array<ArrayBufferLike> = clientKeyPair.publicKey;
         const clientPublicKeyHexString : string = bytesToHex(clientPublicKeyHex);
-        const keyExchange : Response = await fetch(`/gluecrypt/api/keyexchange`, { // CHANGE TO YOUR DOMAIN
+        const keyExchange : Response = await fetch(`/api/auth/key-exchange`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
