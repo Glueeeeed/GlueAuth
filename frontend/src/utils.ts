@@ -14,7 +14,7 @@ export async function getSessionKey() : Promise<sessionData> {
         const clientKeyPair : {secretKey: Uint8Array<ArrayBufferLike>, publicKey: Uint8Array<ArrayBufferLike>}    = x25519.keygen();
         const clientPublicKeyHex : Uint8Array<ArrayBufferLike> = clientKeyPair.publicKey;
         const clientPublicKeyHexString : string = bytesToHex(clientPublicKeyHex);
-        const keyExchange : Response = await fetch(`http://localhost:3000/api/keyexchange`, { // CHANGE TO YOUR DOMAIN
+        const keyExchange : Response = await fetch(`/gluecrypt/api/keyexchange`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -23,6 +23,11 @@ export async function getSessionKey() : Promise<sessionData> {
                 clientPublicKey: clientPublicKeyHexString
             })
         });
+        if (keyExchange.status === 429) {
+            showError("Przekroczono limit zapytań. Spróbuj ponownie później");
+            throw new Error("Too many requests")
+        }
+
         if (!keyExchange.ok) {
             throw new Error('HTTP error! status: ' + keyExchange.status);
         }
@@ -44,7 +49,11 @@ export function verifyDeviceID() {
     }
 }
 
-export function showError() {
+export function showError(arg? : string) {
+    if (arg != null) {
+        const errorMessageContent = document.getElementById("errorMessageContent") as HTMLSpanElement;
+        errorMessageContent.textContent = arg;
+    }
     const loading = document.getElementById("loading") as HTMLDivElement;
     const errorMessage = document.getElementById("errorMessage") as HTMLParagraphElement;
     const back = document.getElementById("back") as HTMLDivElement;
@@ -77,7 +86,7 @@ export async function getFingerprint() : Promise<ThumbmarkResponse> {
     return await tm.get();
 }
 
-export async function insertKey(encryptedKey: string , salt : string, nonceHex : string, uuid : string) : Promise<void>  {
+export async function insertKey(encryptedKey: string , salt : string, privateKeyNonce: string, uuidNonce: string, uuid : string) : Promise<void>  {
     try {
         const db = await openDB('gluecrypt', 2, {
             upgrade(db) {
@@ -89,7 +98,8 @@ export async function insertKey(encryptedKey: string , salt : string, nonceHex :
         const data = encryptedKey;
         await db.put('secrets', data, 'privateKey');
         await db.put('secrets', salt, 'salt');
-        await db.put('secrets', nonceHex, 'nonceHex');
+        await db.put('secrets', privateKeyNonce, 'privateKeyNonce');
+        await db.put('secrets', uuidNonce, 'uuidNonce');
         await db.put('secrets', uuid, 'uuid');
     } catch (error) {
         console.error('Failed to save:', error);
@@ -97,13 +107,15 @@ export async function insertKey(encryptedKey: string , salt : string, nonceHex :
 }
 
 
-export async function securePrivateKey(fingerprint: string, privateKey: string, deviceID: string, baseKey: string, nonceHex : string , uuid: string ): Promise<void> {
+export async function securePrivateKey(fingerprint: string, privateKey: string, deviceID: string, baseKey: string , uuid: string ): Promise<void> {
     const combinedKey : string = fingerprint + deviceID + baseKey;
     const salt : Uint8Array<ArrayBufferLike> = randomBytes(32)
+    const privateKeyNonce : Uint8Array<ArrayBufferLike> = randomBytes(12);
+    const uuidNonce : Uint8Array<ArrayBufferLike> = randomBytes(12);
     const key : Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, salt, { c: 524288, dkLen: 32 });
-    const encryptedPrivateKey : string =  await encryptAesGcm(privateKey, bytesToHex(key), nonceHex);
-    const encryptedUuid : string = await encryptAesGcm(uuid, bytesToHex(key), nonceHex)
-    await insertKey(encryptedPrivateKey, bytesToHex(salt), nonceHex, encryptedUuid);
+    const encryptedPrivateKey : string =  await encryptAesGcm(privateKey, bytesToHex(key), bytesToHex(privateKeyNonce));
+    const encryptedUuid : string = await encryptAesGcm(uuid, bytesToHex(key), bytesToHex(uuidNonce));
+    await insertKey(encryptedPrivateKey, bytesToHex(salt), bytesToHex(privateKeyNonce), bytesToHex(uuidNonce) ,encryptedUuid);
 
 }
 

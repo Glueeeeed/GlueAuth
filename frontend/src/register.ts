@@ -43,7 +43,6 @@ async function register(): Promise<void> {
     try {
         const uuid = crypto.randomUUID();
         const userID = uuid.replace(/-/g, '').slice(0, 31);
-        const nonceHex : string = bytesToHex(randomBytes(12));
         const sessionNonceHex : string = bytesToHex(randomBytes(12));
         const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
         generatingSection.hidden = false;
@@ -54,28 +53,38 @@ async function register(): Promise<void> {
         const fingerprintData : ThumbmarkResponse = await getFingerprint();
         const deviceID = localStorage.getItem('DeviceID') as string;
         const privateKey = bytesToHex(identity.privateKey as Uint8Array);
-        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, nonceHex, userID);
+        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, userID);
         const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
         const commitment : string  = numberToHexUnpadded(identity.commitment);
         const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,sessionNonceHex);
-
-        const registerResponse = await fetch(`http://localhost:3000/apizkp/auth/register`, { // CHANGE TO YOUR DOMAIN
+        const encryptedDeviceID : string = await encryptAesGcm(deviceID, sessionData.secret, sessionNonceHex);
+        const registerResponse = await fetch(`/gluecrypt/api/auth/register`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 commitment: encryptedCommitment,
+                deviceID: encryptedDeviceID,
                 sessionID: sessionData.sessionID,
                 nonceHex: sessionNonceHex,
             })
         });
+
+        if (registerResponse.status === 429) {
+            showError("Przekroczono limit zapytań. Spróbuj ponownie później");
+            throw new Error("Too many requests")
+        }
+
+        if (registerResponse.status === 409) {
+            showError("Twoje urządzenie już posiada utworzoną tożsamość. Jeżeli to błąd, spróbuj zarejestrować się na innym urządzeniu.");
+            throw new Error("Failed register")
+        }
+
         if (!registerResponse.ok) {
             throw new Error('HTTP error! status: ' + registerResponse.status);
         }
-        if (registerResponse.status !== 200) {
-            throw new Error('Registration failed with status: ' + registerResponse.status);
-        }
+
 
         if (encryptQRData.checked) {
             interface qrDataStructure {
@@ -116,6 +125,7 @@ async function register(): Promise<void> {
             qrSection.hidden = false;
         }
     } catch (error) {
+        console.error(error);
         showError();
     }
 

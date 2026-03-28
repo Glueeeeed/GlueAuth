@@ -6,7 +6,13 @@
  * @module authController
  */
 import {Response, Request} from "express";
-import {checkIfCommitmentExists, checkIfNullifierExists, registerCommitment, registerNullifier} from "../services/authService";
+import {
+    checkIfCommitmentExists, checkIfDeviceRegistered,
+    checkIfNullifierExists,
+    registerCommitment,
+    registerDevice,
+    registerNullifier
+} from "../services/authService";
 import {decryptAesGcm} from "../utils/crypto";
 import * as jwtLib from 'jsonwebtoken';
 import {Secrets} from "./keyExchangeController";
@@ -14,6 +20,7 @@ import {deleteSecret} from "../services/keyExchangeService";
 import { verifyProof } from "@semaphore-protocol/proof";
 interface RegisterRequest {
     commitment: string;
+    deviceID: string;
     sessionID: string;
     secret: string;
     nonceHex: string;
@@ -31,7 +38,7 @@ interface Credentials {
 
 
 export const register = async (req: Request<{}, {}, RegisterRequest>, res: Response<RegisterResponse | {error: string}>): Promise<void> => {
-    const { commitment, sessionID , secret, nonceHex } = req.body;
+    const { commitment, sessionID , secret, nonceHex, deviceID } = req.body;
     try {
 
 
@@ -39,19 +46,26 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
             console.log(`Secret for session ID ${sessionID} is correct.`);
         }
 
-        if (!commitment || !sessionID) {
+        if (!commitment || !sessionID || !deviceID) {
             deleteSecret(sessionID);
-            res.status(400).json({ error: 'Missing commitment or sessionID' });
+            res.status(400).json({ error: 'Missing commitment or sessionID or DeviceID' });
             return;
         }
         const decryptedCommitment : string =  await decryptAesGcm(commitment, Secrets.get(sessionID) || '', nonceHex);
+        const decryptedDeviceID : string = await decryptAesGcm(deviceID, Secrets.get(sessionID) || '', nonceHex);
 
         if (await checkIfCommitmentExists(decryptedCommitment)) {
             deleteSecret(sessionID);
             res.status(409).json({ error: 'Commitment already exists' });
         }
 
+        if (await checkIfDeviceRegistered(decryptedDeviceID)) {
+            deleteSecret(sessionID);
+            res.status(409).json({error: "Device is registered"})
+        }
+
         await registerCommitment(decryptedCommitment);
+        await registerDevice(decryptedDeviceID)
         res.status(200).json({ message: 'Commitment registered successfully' });
         deleteSecret(sessionID);
     } catch (error) {
@@ -89,17 +103,18 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
 
         await registerNullifier(zkp.nullifier);
         const token= jwtLib.sign(
-            {userID: zkp.message},
+            {userID: zkp.message.slice(0,16), baseKey: process.env.baseKey},
             process.env.SESSION_SECRET_JWT as string,
             {expiresIn: '15m'}
         );
 
         res.cookie('token', token, {
+            domain: '.glueeed.dev',
+            path: '/',
             maxAge: 60 * 60 * 1000,
             httpOnly: true,
-            secure: false , // Set to true in production with HTTPS
+            secure: true , // Set to true in production with HTTPS
             sameSite: 'lax',
-            path: '/'
         });
 
         res.status(200).json({ message: 'Authenticated successfully' });
@@ -112,4 +127,17 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
         deleteSecret(sessionID);
         res.status(500).json({error: "Internal Server Error"})
     }
+}
+
+
+export const logout = async (req: Request<{}, {}, {}>, res: Response<{} | {error: string}>): Promise<void> => {
+    res.clearCookie("token", {
+        domain: ".glueeed.dev",
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax"
+    });
+
+    res.status(200).redirect('/gluecrypt/login');
 }

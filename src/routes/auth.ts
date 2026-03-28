@@ -1,9 +1,17 @@
 import express, { Router } from 'express';
-import {login, register} from '../controllers/authController';
+import {login, register, logout} from '../controllers/authController';
+import rateLimit from "express-rate-limit";
 
 const router: Router = express.Router();
 
-router.post('/register', register );
-router.post('/proof', login );
+const authLimit = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 3,
+    message: "Too many request."
+});
+
+router.post('/register', authLimit, register );
+router.post('/proof',authLimit, login );
+router.get('/logout', logout);
 
 export default router;

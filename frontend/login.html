@@ -24,7 +24,7 @@
 </nav>
 <main class="justify-center items-center flex min-h-screen">
   <div class="w-full max-w-md">
-    <div class="bg-white p-10 rounded-3xl shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] border border-gray-100">
+    <div class="bg-white p-10 mt-50 rounded-3xl shadow-[0_32px_64px_-15px_rgba(0,0,0,0.1)] border border-gray-100">
       <div id="loginSection" >
         <div class="text-center mb-8">
           <h1 class="text-3xl font-extrabold text-[#36382e] tracking-tight">Zaloguj się</h1>
@@ -87,9 +87,11 @@
       </div>
 
       <div id="decryptSection" hidden >
-        <div class="flex items-center gap-2 mb-4 cursor-pointer hover:opacity-70 transition-opacity w-fit" id="backToUploadBtn">
-          <i class="ri-arrow-left-s-line text-xl text-gray-400"></i>
-          <span class="text-sm font-bold text-gray-400 uppercase tracking-wider">Wróć</span>
+        <div class="mt-10 pt-8 border-t border-gray-100 text-center">
+          <a href="/gluecrypt/login" class="inline-flex items-center gap-2 font-bold text-[#36382e] hover:underline underline-offset-4">
+            <i class="ri-arrow-left-line"></i>
+            Powrót
+          </a>
         </div>
 
         <h1 class="text-xl font-extrabold text-[#36382e] tracking-tight">Odszyfruj kod QR</h1>

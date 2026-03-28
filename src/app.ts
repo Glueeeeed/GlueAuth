@@ -3,20 +3,14 @@ import path from "path";
 import cors from 'cors';
 import {ZKP} from './utils/zkp'
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
 import https from 'https';
 
 
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 10,
-    message: "Too many request."
-});
 
 
 
 //Uncomment when httpsMode is enabled
-// import {options} from "./config/ssl";
+import {options} from "./config/ssl";
 
 import {corsEnabled, httpsMode, PORT, domain} from "./config/settings";
 
@@ -40,7 +34,7 @@ const port : number = PORT;
 
 //Uncomment when httpsMode is enabled
 
-// const ssl = options
+const ssl = options
 
 
 //Middlewares
@@ -59,17 +53,17 @@ if (corsEnabled) {
 
 // Frontend handling
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/' , express.static(path.join(__dirname, 'public')));
 
-app.get('/gluecrypt/register', (req: Request, res: Response)  => {
+app.get('/register', (req: Request, res: Response)  => {
     res.sendFile(path.join(__dirname, 'public' ,'register.html'));
 })
 
-app.get('/gluecrypt/login', (req: Request, res: Response) => {
+app.get('/login', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, 'public' ,'login.html'));
 })
 
-app.get('/gluecrypt/zkp-info', (req: Request, res: Response) => {
+app.get('/zkp-info', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, 'public' ,'zkp-info.html'));
 })
 
@@ -79,9 +73,9 @@ app.get('/gluecrypt', secured ,(req: Request, res: Response) => {
 
 // API endpoints
 
-app.use('/api', limiter, keyenchange);
-app.use('/api/zkp/auth', limiter, auth);
-app.use('/api/zkp', limiter, Zkp)
+app.use('/api', keyenchange);
+app.use('/api/auth', auth);
+app.use('/api/zkp', Zkp)
 
 
 
@@ -90,17 +84,17 @@ app.use('/api/zkp', limiter, Zkp)
 
 if (httpsMode) {
 
-    // https.createServer(ssl, app).listen(port, "0.0.0.0", () => {
-    //
-    //     console.log(`App running at ${domain}:${port}`);
-    //
-    // });
+    https.createServer(ssl, app).listen(port, "0.0.0.0", () => {
 
-} else {
-    app.listen(port, () => {
-        console.log(`App running at ${domain}:${port + "/gluecrypt"}`);
+        console.log(`App running at ${domain}:${port}`);
 
     });
+
+} else {
+    // app.listen(port, () => {
+    //     console.log(`App running at ${domain}:${port + "/gluecrypt"}`);
+    //
+    // });
 
 }
 
