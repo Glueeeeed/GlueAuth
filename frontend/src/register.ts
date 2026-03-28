@@ -43,7 +43,6 @@ async function register(): Promise<void> {
     try {
         const uuid = crypto.randomUUID();
         const userID = uuid.replace(/-/g, '').slice(0, 31);
-        const nonceHex : string = bytesToHex(randomBytes(12));
         const sessionNonceHex : string = bytesToHex(randomBytes(12));
         const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
         generatingSection.hidden = false;
@@ -54,7 +53,7 @@ async function register(): Promise<void> {
         const fingerprintData : ThumbmarkResponse = await getFingerprint();
         const deviceID = localStorage.getItem('DeviceID') as string;
         const privateKey = bytesToHex(identity.privateKey as Uint8Array);
-        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, nonceHex, userID);
+        await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, userID);
         const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
         const commitment : string  = numberToHexUnpadded(identity.commitment);
         const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,sessionNonceHex);

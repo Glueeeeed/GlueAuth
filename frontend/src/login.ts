@@ -5,7 +5,7 @@ import {
 } from "./utils.ts";
 import type {sessionData} from "./register.ts";
 import type {ThumbmarkResponse} from "@thumbmarkjs/thumbmarkjs";
-import {bytesToHex, hexToBytes, randomBytes} from "@noble/ciphers/utils.js";
+import {bytesToHex, hexToBytes} from "@noble/ciphers/utils.js";
 import {pbkdf2} from "@noble/hashes/pbkdf2.js";
 import {sha256} from "@noble/hashes/sha2.js";
 import QrScanner from 'qr-scanner';
@@ -54,9 +54,8 @@ addEventListener('DOMContentLoaded', () => {
                         notFoundSection.hidden = true;
                         decryptSection.hidden = false;
                     } else {
-                        const nonceHex  = bytesToHex(randomBytes(12));
                         const data = JSON.parse(qrData);
-                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex, data.uuid);
+                        await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string, data.uuid);
                         login();
                     }
                 } catch (error) {
@@ -84,9 +83,8 @@ addEventListener('DOMContentLoaded', () => {
                     notFoundSection.hidden = true;
                     decryptSection.hidden = false;
                 } else {
-                    const nonceHex  = bytesToHex(randomBytes(12));
                     const data = JSON.parse(result);
-                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string,nonceHex, data.uuid);
+                    await securePrivateKey(sessionStorage.getItem("fingerprint") as string, data.key, localStorage.getItem("DeviceID") as string, sessionStorage.getItem("baseKey") as string, data.uuid);
                     login();
                 }
             });
@@ -126,14 +124,12 @@ addEventListener('DOMContentLoaded', () => {
                     }
 
                     const data = JSON.parse(encryptedData) as qrDataStructure;
-                    const nonceHex  = bytesToHex(randomBytes(12));
                     const decryptedKey = await decryptQR(data.key, pin, data.nonce, data.salt);
                     await securePrivateKey(
                         sessionStorage.getItem("fingerprint") as string,
                         decryptedKey,
                         localStorage.getItem("DeviceID") as string,
                         sessionStorage.getItem("baseKey") as string,
-                        nonceHex as string,
                         data.uuid
                     );
                     const decryptSection = document.getElementById("decryptSection") as HTMLDivElement;

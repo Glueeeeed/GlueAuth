@@ -1,9 +1,9 @@
 import 'dotenv/config';
 
 // If is true, connection using https. Check ssl.ts to fill ssl certificate.
-export const httpsMode : boolean = true;
+export const httpsMode : boolean = false;
 // Enter your domain (If locally type http://localhost)
-export const domain : string = "https://glueeed.dev";
+export const domain : string = ".glueeed.dev";
 //Runs application on the selected port
 export const PORT : number = 3000;
 // If is true, CORS is enabled

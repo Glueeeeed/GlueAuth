@@ -6,6 +6,7 @@
  * @module authController
  */
 import {Response, Request} from "express";
+import {domain, httpsMode} from "../config/settings";
 import {
     checkIfCommitmentExists, checkIfDeviceRegistered,
     checkIfNullifierExists,
@@ -109,11 +110,11 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
         );
 
         res.cookie('token', token, {
-            domain: '.glueeed.dev',
+            domain: domain,
             path: '/',
             maxAge: 60 * 60 * 1000,
             httpOnly: true,
-            secure: true , // Set to true in production with HTTPS
+            secure: httpsMode ,
             sameSite: 'lax',
         });
 
@@ -132,10 +133,10 @@ export const login = async (req: Request<{}, {}, Credentials>, res: Response<Reg
 
 export const logout = async (req: Request<{}, {}, {}>, res: Response<{} | {error: string}>): Promise<void> => {
     res.clearCookie("token", {
-        domain: ".glueeed.dev",
+        domain: domain,
         path: "/",
         httpOnly: true,
-        secure: true,
+        secure: httpsMode,
         sameSite: "lax"
     });
 

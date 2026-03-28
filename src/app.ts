@@ -7,8 +7,6 @@ import https from 'https';
 
 
 
-
-
 //Uncomment when httpsMode is enabled
 import {options} from "./config/ssl";
 
@@ -91,6 +89,9 @@ if (httpsMode) {
     });
 
 } else {
+
+     // Uncomment when https is disabled
+
     // app.listen(port, () => {
     //     console.log(`App running at ${domain}:${port + "/gluecrypt"}`);
     //
