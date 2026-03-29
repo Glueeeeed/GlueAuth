@@ -1,0 +1,35 @@
+{
+  "login": {
+    "title": "Zaloguj się",
+    "subtitle": "Zaloguj się aby dołączyć do GlueCrypt",
+    "button": "Kontynuuj z GlueAuth",
+    "no_account": "Nie masz jeszcze konta?",
+    "register": "Zarejestruj sie",
+    "credentials_not_found": "Nie znaleziono twoich poświadczeń!",
+    "restore_access": "Aby przywrócić dostęp do Twojego konta, zeskanuj lub zaimportuj kod QR",
+    "scan_qr": "Zeskanuj kod QR",
+    "upload_qr": "Wczytaj kod QR",
+    "pin_notice": "Pamiętaj, że do użycia twojego kodu QR możemy wymagać od ciebie 6 cyfrowego kodu PIN.",
+    "back": "Powrót",
+    "decrypt_title": "Odszyfruj kod QR",
+    "decrypt_subtitle": "Wprowadź swój 6-cyfrowy kod PIN, aby odblokować poświadczenia.",
+    "decrypt_button": "Odszyfruj i zaloguj",
+    "logging_in": "Trwa logowanie...",
+    "wait_message": "To może potrwać kilka sekund, dziękujemy za cierpliwość!",
+    "error_title": "Wystąpił błąd",
+    "error_message": "Nie udało się zalogować, spróbuj ponownie, jeżeli problem się powtarza to prawdopodobnie leży po naszej stronie :\\",
+    "back_to_login": "Powrót do logowania"
+  },
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Bezpieczne i anonimowe narzędzie do szyfrowania danych za pomocą AES.",
+    "created_by": "Stworzono z ",
+    "created_by2": " przez Glueeed.",
+    "opensource": "Projekt open-source dostępny na",
+    "opensource_link": "GitHub"
+  }
+}
+

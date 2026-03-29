@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "zkp": {
+    "title": "Zero-Knowledge Proofs",
+    "subtitle": "Privacy through mathematics, not through trust.",
+    "what_is_title": "What is ZKP?",
+    "what_is_description": "A Zero-Knowledge Proof (ZKP) is a cryptographic method that allows one party (the prover) to prove to another party (the verifier) that a given statement is true, without revealing any information beyond the validity of the statement itself.",
+    "no_passwords_title": "No passwords",
+    "no_passwords_description": "You don't send us your password. You only prove that you know it using advanced mathematical equations.",
+    "anonymity_title": "Full anonymity",
+    "anonymity_description": "Your personal data never reaches our database. Your identity remains yours alone.",
+    "how_it_works_title": "How does it work in GlueCrypt?",
+    "step_1": "During login, your browser generates a unique mathematical proof based on your credentials.",
+    "step_2": "Only this proof (not your password) is sent to our servers.",
+    "step_3": "The server verifies the proof. If it matches, you are logged in, even though the server never saw your password.",
+    "back_to_register": "Back to registration"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Secure and anonymous data encryption tool using AES.",
+    "created_by": "Created with ",
+    "created_by2": " by Glueeed.",
+    "opensource": "Open-source project available on",
+    "opensource_link": "GitHub"
+  }
+}

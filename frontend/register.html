@@ -14,12 +14,17 @@
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css"
           integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
-    <link href="./src/style.css" rel="stylesheet">
+    <link href="src/style.css" rel="stylesheet">
 </head>
 <body class="bg-white">
 <nav class="fixed w-full top-0 z-10 h-25 text-amber-50 navbar ">
-    <div class="flex justify-start items-center">
-        <p class="text-4xl mt-7 mb-5 ml-10 font-['Pacifico'] text-[#eff1ed]">GlueCrypt</p>
+    <div class="flex justify-between items-center w-full px-10">
+        <p class="lang text-4xl mt-7 mb-5 font-['Pacifico'] text-[#eff1ed]" data-key="nav.brand">GlueCrypt</p>
+        <div class="flex gap-4 mt-2">
+            <button onclick="localStorage.setItem('lang', 'pl'); location.reload();" class="text-[#eff1ed] hover:text-white font-bold">PL</button>
+            <button onclick="localStorage.setItem('lang', 'en'); location.reload();" class="text-[#eff1ed] hover:text-white font-bold">EN</button>
+            <button onclick="localStorage.setItem('lang', 'es'); location.reload();" class="text-[#eff1ed] hover:text-white font-bold">ES</button>
+        </div>
     </div>
 </nav>
 <main class="justify-center items-center flex min-h-screen">
@@ -30,28 +35,28 @@
 
             <div class="space-y-6" id="registerSection" >
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-extrabold text-[#36382e] tracking-tight">Utwórz konto</h1>
-                    <p class="text-gray-500 mt-2 text-sm">Dołącz do zdecentralizowanej sieci GlueCrypt</p>
+                    <h1 class="lang text-3xl font-extrabold text-[#36382e] tracking-tight" data-key="register.title">Utwórz konto</h1>
+                    <p class="lang text-gray-500 mt-2 text-sm" data-key="register.subtitle">Dołącz do zdecentralizowanej sieci GlueCrypt</p>
                 </div>
                 <button id="registerBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
-                    <span>Kontynuuj z GlueAuth</span>
+                    <span class="lang" data-key="register.button">Kontynuuj z GlueAuth</span>
                     <i class="ri-arrow-right-line transition-transform group-hover:translate-x-1"></i>
                 </button>
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
                     <div class="flex gap-3">
                         <div>
-                            <p class="text-xs font-bold text-gray-700">Technologia Zero-Knowledge</p>
+                            <p class="lang text-xs font-bold text-gray-700" data-key="register.zkp_title">Technologia Zero-Knowledge</p>
                             <p class="text-[11px] text-gray-500 mt-1 leading-relaxed">
-                                Twoja tożsamość jest matematycznie chroniona. Nie przechowujemy haseł ani danych osobowych.
-                                <a href="/gluecrypt/zkp-info" class="text-[#36382e] underline decoration-dotted underline-offset-2">Dowiedz się więcej</a>
+                                <span class="lang" data-key="register.zkp_description">Twoja tożsamość jest matematycznie chroniona. Nie przechowujemy haseł ani danych osobowych.</span>
+                                <a href="/gluecrypt/zkp-info" class="lang text-[#36382e] underline decoration-dotted underline-offset-2" data-key="register.zkp_more">Dowiedz się więcej</a>
                             </p>
                         </div>
                     </div>
                 </div>
                 <div class="mt-4 pt-6  text-center">
                     <p class="text-gray-600 text-sm">
-                        Masz już konto?
-                        <a href="/gluecrypt/login" class="font-bold text-[#36382e] hover:underline underline-offset-4">Zaloguj się</a>
+                        <span class="lang" data-key="register.have_account">Masz już konto?</span>
+                        <a href="/gluecrypt/login" class="lang font-bold text-[#36382e] hover:underline underline-offset-4" data-key="register.login">Zaloguj się</a>
                     </p>
                 </div>
             </div>
@@ -60,24 +65,24 @@
 
             <div id="infoSection" class="max-w-md mx-auto px-5 py-8" hidden  >
                 <div class="text-center mb-10">
-                    <h1 class="text-3xl font-bold text-[#36382e] mb-4">Ważna informacja</h1>
+                    <h1 class="lang text-3xl font-bold text-[#36382e] mb-4" data-key="register.info_title">Ważna informacja</h1>
 
                     <p class="text-lg text-gray-800 leading-relaxed mb-6">
-                        Żeby zalogować się na swoje konto z innego telefonu lub komputera,<br>
-                        będziesz potrzebować <strong>tego kodu QR</strong>, który zaraz Ci pokażemy.
+                        <span class="lang" data-key="register.info_message_1">Żeby zalogować się na swoje konto z innego telefonu lub komputera,</span><br>
+                        <span class="lang" data-key="register.info_message_2">będziesz potrzebować <strong>tego kodu QR</strong>, który zaraz Ci pokażemy.</span>
                     </p>
 
                     <p class="text-base text-red-600 font-medium leading-relaxed"><br>
-                        Jak zgubisz ten kod QR albo ktoś Ci go zabierze, <strong>tracisz konto na zawsze</strong>.<br>
-                        Nie przechowujemy żadnych haseł ani danych, więc nie możemy Ci pomóc odzyskać dostępu.
+                        <span class="lang" data-key="register.warning_1">Jak zgubisz ten kod QR albo ktoś Ci go zabierze, <strong>tracisz konto na zawsze</strong>.</span><br>
+                        <span class="lang" data-key="register.warning_2">Nie przechowujemy żadnych haseł ani danych, więc nie możemy Ci pomóc odzyskać dostępu.</span>
                     </p>
 
 
                     <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 mt-5 mb-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-bold text-[#36382e]">Zaszyfruj kod QR</p>
-                                <p class="text-[11px] text-gray-500 mt-0.5">Dodaj 6-cyfrowy PIN dla bezpieczeństwa</p>
+                                <p class="lang text-sm font-bold text-[#36382e]" data-key="register.encrypt_qr">Zaszyfruj kod QR</p>
+                                <p class="lang text-[11px] text-gray-500 mt-0.5" data-key="register.encrypt_pin_notice">Dodaj 6-cyfrowy PIN dla bezpieczeństwa</p>
                             </div>
                             <label class="inline-flex items-center cursor-pointer">
                                 <input id="encryptQR" type="checkbox" value="" class="sr-only peer" checked>
@@ -89,7 +94,7 @@
                 </div>
 
                 <button id="understandBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
-                    <span>Rozumiem, pokaż kod QR</span>
+                    <span class="lang" data-key="register.understand_button">Rozumiem, pokaż kod QR</span>
                     <i class="ri-arrow-right-line transition-transform group-hover:translate-x-1"></i>
                 </button>
             </div>
@@ -98,23 +103,23 @@
 <!--            qr section-->
 
             <div id="qrSection" class="text-center" hidden >
-                <h1 class="text-3xl font-bold text-[#36382e] mb-4">Twój kod QR</h1>
-                <p class="text-lg text-gray-800 leading-relaxed mb-6">Zeskanuj ten kod QR w GlueAuth, aby zalogować się na swoje konto na innym urządzeniu.</p>
+                <h1 class="lang text-3xl font-bold text-[#36382e] mb-4" data-key="register.qr_title">Twój kod QR</h1>
+                <p class="lang text-lg text-gray-800 leading-relaxed mb-6" data-key="register.qr_description">Zeskanuj ten kod QR w GlueAuth, aby zalogować się na swoje konto na innym urządzeniu.</p>
                 <div class="inline-block p-2 mt-2 mb-5 bg-gray-50 rounded-xl border border-gray-100">
                     <canvas id="qrCode"></canvas>
                 </div>
 
                 <div id="pinInfo" class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 " hidden>
-                    Twoj kod PIN: <span id="pinCode" class="font-bold text-lg text-[#36382e]"></span>
-                    <p>Kod PIN jest potrzebny aby w przyszłości odszyfrować ten kod QR</p>
+                    <span class="lang" data-key="register.pin_prefix">Twoj kod PIN:</span> <span id="pinCode" class="font-bold text-lg text-[#36382e]"></span>
+                    <p class="lang" data-key="register.pin_notice">Kod PIN jest potrzebny aby w przyszłości odszyfrować ten kod QR</p>
                 </div>
 
                 <button id="downloadBtn" class="group relative w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-bold text-white bg-[#36382e] rounded-2xl transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
-                    <span>Pobierz kod QR</span>
+                    <span class="lang" data-key="register.download_button">Pobierz kod QR</span>
                 </button>
 
                 <div class="mt-10 pt-8 border-t border-gray-100 text-center">
-                    <a href="/gluecrypt/login" class="inline-flex items-center gap-2 font-bold text-[#36382e] hover:underline underline-offset-4">
+                    <a href="/gluecrypt/login" class="lang inline-flex items-center gap-2 font-bold text-[#36382e] hover:underline underline-offset-4" data-key="register.login_link">
                         <i class="ri-arrow-left-line"></i>
                         Zaloguj sie
                     </a>
@@ -127,8 +132,8 @@
 
             <div id="generatingSection" hidden >
                 <div class="text-center mb-10">
-                    <h1 class="text-3xl font-bold text-[#36382e] mb-4">Generowanie konta...</h1>
-                    <p class="text-lg text-gray-800 leading-relaxed mb-6">To może potrwać kilka sekund, dziękujemy za cierpliwość!</p>
+                    <h1 class="lang text-3xl font-bold text-[#36382e] mb-4" data-key="register.generating_title">Generowanie konta...</h1>
+                    <p class="lang text-lg text-gray-800 leading-relaxed mb-6" data-key="register.generating_wait">To może potrwać kilka sekund, dziękujemy za cierpliwość!</p>
                 </div>
                 <div id="loading" class="flex justify-center" >
                     <svg class="animate-spin h-10 w-10 text-[#36382e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -138,12 +143,12 @@
                 </div>
 
                 <div id="errorMessage" class=" flex flex-col  text-center mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded" hidden>
-                    <strong class="font-bold">Wystąpił błąd</strong>
-                    <span id="errorMessageContent">Nie udało się utworzyć konta, spróbuj ponownie, jeżeli problem się powtarza to prawdopodobnie leży po naszej stronie :\</span>
+                    <strong class="lang font-bold" data-key="register.error_title">Wystąpił błąd</strong>
+                    <span class="lang" id="errorMessageContent" data-key="register.error_message">Nie udało się utworzyć konta, spróbuj ponownie, jeżeli problem się powtarza to prawdopodobnie leży po naszej stronie :\</span>
                 </div>
 
                 <div id="back" class="mt-10 pt-8 border-t border-gray-100 text-center">
-                    <a href="/gluecrypt/register" class="inline-flex items-center gap-2 font-bold text-[#36382e] hover:underline underline-offset-4">
+                    <a href="/gluecrypt/register" class="lang inline-flex items-center gap-2 font-bold text-[#36382e] hover:underline underline-offset-4" data-key="register.back_to_register">
                         <i class="ri-arrow-left-line"></i>
                         Powrót do rejestracji
                     </a>
@@ -158,17 +163,22 @@
     <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-center">
             <div class="mb-6 mt-6 md:mb-0">
-                <a class="text-3xl font-['Pacifico'] text-white" href="#">GlueCrypt</a>
-                <p class="mt-5 max-sm:text-sm opacity-80">Bezpieczne i anonimowe narzędzie do szyfrowania danych za pomocą AES.</p>
+                <a class="lang text-3xl font-['Pacifico'] text-white" href="#" data-key="footer.brand">GlueCrypt</a>
+                <p class="lang mt-5 max-sm:text-sm opacity-80" data-key="footer.description">Bezpieczne i anonimowe narzędzie do szyfrowania danych za pomocą AES.</p>
             </div>
         </div>
         <div class="border-t border-white/20 mt-6 p-6 text-center">
-            <p class="opacity-80">Stworzono z <i class=" text-red-600 ri-heart-fill"></i> przez Glueeed.</p>
-            <p class="opacity-80">Projekt open-source dostępny na <a href="https://github.com/Glueeeeed/GlueAuth"><i
-                    class="ri-github-fill"></i> GitHub</a></p>
+            <div class="flex justify-center gap-1">
+                <p class="lang opacity-80" data-key="footer.created_by">Stworzono z</p>
+                <i class=" text-red-600 ri-heart-fill"></i>
+                <p class="lang opacity-80" data-key="footer.created_by2">przez Glueeed</p>
+            </div>
+            <p class="opacity-80">
+                <span class="lang" data-key="footer.opensource">Projekt open-source dostępny na</span>
+                <a href="https://github.com/Glueeeeed/GlueAuth" class="lang" data-key="footer.opensource_link"><i class="ri-github-fill"></i> GitHub</a>
+            </p>
             <p class="text-sm mt-3 opacity-60">Version 1.0.0</p>
         </div>
-        <div id="tsparticles"></div>
     </div>
 </footer>
 <script type="module" src="./src/register.ts"></script>

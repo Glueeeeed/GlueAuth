@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "zkp": {
+    "title": "Zero-Knowledge Proofs",
+    "subtitle": "Privacidad mediante matemáticas, nie mediante confianza.",
+    "what_is_title": "¿Qué jest ZKP?",
+    "what_is_description": "Una Prueba de Conocimiento Cero (Zero-Knowledge Proof) es un método criptográfico que permite a una parte (el probador) demostrar a otra parte (el verificador) que una declaración dada es verdadera, sin revelar ninguna información más allá de la validez de la propia declaración.",
+    "no_passwords_title": "Sin contraseñas",
+    "no_passwords_description": "No nos envías tu contraseña. Solo demuestras que la conoces utilizando ecuaciones matemáticas avanzadas.",
+    "anonymity_title": "Anonimato total",
+    "anonymity_description": "Tus datos personales nunca llegan a nuestra base de datos. Tu identidad sigue siendo solo tuya.",
+    "how_it_works_title": "¿Cómo funciona en GlueCrypt?",
+    "step_1": "Durante el inicio de sesión, tu navegador genera una prueba matemática única basada en tus credenciales.",
+    "step_2": "Solo esta prueba (y no tu contraseña) se envía a nuestros servidores.",
+    "step_3": "El servidor verifica la prueba. Si coincide, se inicia la sesión, aunque el servidor nunca haya visto tu contraseña.",
+    "back_to_register": "Volver al registro"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Herramienta segura y anónima para el cifrado de datos mediante AES.",
+    "created_by": "Creado con ",
+    "created_by2": " por Glueeed.",
+    "opensource": "Proyecto de código abierto disponible en",
+    "opensource_link": "GitHub"
+  }
+}

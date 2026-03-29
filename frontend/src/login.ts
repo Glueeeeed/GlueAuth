@@ -1,6 +1,6 @@
 import {openDB} from "idb";
 import {
-    decryptAesGcm, getFingerprint, getSessionKey, scanQRCode, securePrivateKey,
+    decryptAesGcm, getFingerprint, getSessionKey, injectTranslations, scanQRCode, securePrivateKey,
     showError, startCameraScan, verifyDeviceID
 } from "./utils.ts";
 import type {sessionData} from "./register.ts";
@@ -23,6 +23,7 @@ interface secretStructure {
 }
 
 addEventListener('DOMContentLoaded', () => {
+    injectTranslations();
     const loginBtn = document.getElementById("loginBtn") as HTMLButtonElement;
     const uploadQRBtn = document.getElementById("uploadQRBtn") as HTMLInputElement;
     const scanQRBtn = document.getElementById("scanQRBtn") as HTMLButtonElement;

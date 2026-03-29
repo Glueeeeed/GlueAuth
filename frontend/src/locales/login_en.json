@@ -1,0 +1,34 @@
+{
+  "login": {
+    "title": "Sign In",
+    "subtitle": "Sign in to join GlueCrypt",
+    "button": "Continue with GlueAuth",
+    "no_account": "Don't have an account?",
+    "register": "Sign up",
+    "credentials_not_found": "Your credentials were not found!",
+    "restore_access": "To restore access to your account, scan or import a QR code",
+    "scan_qr": "Scan QR Code",
+    "upload_qr": "Load QR Code",
+    "pin_notice": "Remember, we may require a 6-digit PIN code to use your QR code.",
+    "back": "Back",
+    "decrypt_title": "Decrypt QR Code",
+    "decrypt_subtitle": "Enter your 6-digit PIN to unlock credentials.",
+    "decrypt_button": "Decrypt and Login",
+    "logging_in": "Logging in...",
+    "wait_message": "This may take a few seconds, thank you for your patience!",
+    "error_title": "An error occurred",
+    "error_message": "Failed to log in, please try again. If the problem persists, it is likely on our side :\\",
+    "back_to_login": "Back to login"
+  },
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Secure and anonymous data encryption tool using AES.",
+    "created_by": "Created with ",
+    "created_by2": " by Glueeed.",
+    "opensource": "Open-source project available on",
+    "opensource_link": "GitHub"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "register": {
+    "title": "Create Account",
+    "subtitle": "Join GlueCrypt service",
+    "button": "Continue with GlueAuth",
+    "zkp_title": "Zero-Knowledge Technology",
+    "zkp_description": "Your identity is mathematically protected. We do not store passwords or personal data.",
+    "zkp_more": "Learn more",
+    "have_account": "Already have an account?",
+    "login": "Sign in",
+    "info_title": "Important Information",
+    "info_message_1": "To log in to your account from another phone or computer,",
+    "info_message_2": "you will need this QR code, which we are about to show you.",
+    "warning_1": "If you lose this QR code or someone takes it from you, you lose your account forever.",
+    "warning_2": "We do not store any passwords or data, so we cannot help you regain access.",
+    "encrypt_qr": "Encrypt QR Code",
+    "encrypt_pin_notice": "Add a 6-digit PIN for security",
+    "understand_button": "I understand, show QR code",
+    "qr_title": "Your QR Code",
+    "qr_description": "Scan this QR code in GlueAuth to log in to your account on another device.",
+    "pin_prefix": "Your PIN code:",
+    "pin_notice": "PIN code is needed to decrypt this QR code in the future",
+    "download_button": "Download QR Code",
+    "login_link": "Sign in",
+    "generating_title": "Generating account...",
+    "generating_wait": "This may take a few seconds, thank you for your patience!",
+    "error_title": "An error occurred",
+    "error_message": "Failed to create account, please try again. If the problem persists, it is likely on our side :\\",
+    "back_to_register": "Back to registration"
+  },
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Secure and anonymous data encryption tool using AES.",
+    "created_by": "Created with ",
+    "created_by2": " by Glueeed.",
+    "opensource": "Open-source project available on",
+    "opensource_link": "GitHub"
+  }
+}

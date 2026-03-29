@@ -1,4 +1,13 @@
 import {x25519} from "@noble/curves/ed25519.js";
+import loginPl from './locales/login_pl.json';
+import registerPl from './locales/register_pl.json';
+import zkpInfoPl from './locales/zkp_info_pl.json';
+import loginEn from './locales/login_en.json';
+import registerEn from './locales/register_en.json';
+import zkpInfoEn from './locales/zkp_info_en.json';
+import loginEs from './locales/login_es.json';
+import registerEs from './locales/register_es.json';
+import zkpInfoEs from './locales/zkp_info_es.json';
 import {bytesToHex, type Cipher, hexToBytes, randomBytes} from "@noble/ciphers/utils.js";
 import type {sessionData} from "./register.ts";
 import {gcm} from "@noble/ciphers/aes.js";
@@ -140,4 +149,61 @@ export function startCameraScan(videoElement: HTMLVideoElement, onResult: (resul
     );
     qrScanner.start();
     return qrScanner;
+}
+
+export function getCurrentLang(): boolean|string {
+    const savedLang = localStorage.getItem('lang');
+    if (savedLang) return savedLang;
+    const browserLang = navigator.language.split('-')[0];
+    return (browserLang === 'pl' || browserLang === 'en' || browserLang === 'es');
+}
+
+export function injectTranslations() {
+    const lang = getCurrentLang();
+    const langElements = document.querySelectorAll('.lang');
+    
+    const isRegisterPage = window.location.pathname.includes('register');
+    const isZkpInfoPage = window.location.pathname.includes('zkp-info');
+    let dictionary : any;
+    if (lang === 'pl') {
+        dictionary = loginPl;
+        if (isRegisterPage) {
+            dictionary = registerPl
+        } else if (isZkpInfoPage) {
+            dictionary = zkpInfoPl;
+        }
+    } else if (lang === 'es') {
+        dictionary = loginEs;
+        if (isRegisterPage) {
+            dictionary = registerEs;
+        } else if (isZkpInfoPage) {
+            dictionary = zkpInfoEs;
+        }
+    } else {
+        dictionary = loginEn;
+        if (isRegisterPage) {
+            dictionary = registerEn
+        } else if (isZkpInfoPage) {
+            dictionary = zkpInfoEn;
+        }
+    }
+
+
+    langElements.forEach((element) => {
+        const key = element.getAttribute('data-key');
+        if (key) {
+            const keys = key.split('.');
+            let result: any = dictionary;
+            for (const k of keys) {
+                if (result[k]) result = result[k];
+                else {
+                    result = null;
+                    break;
+                }
+            }
+            if (result && typeof result === 'string') {
+                element.textContent = result;
+            }
+        }
+    });
 }

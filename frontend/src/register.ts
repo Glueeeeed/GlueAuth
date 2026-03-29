@@ -5,7 +5,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 import { pbkdf2 } from '@noble/hashes/pbkdf2.js';
 import {Identity} from "@semaphore-protocol/core";
 import {numberToHexUnpadded} from "@noble/curves/utils.js";
-import {getSessionKey, verifyDeviceID, encryptAesGcm, getFingerprint, securePrivateKey, showError} from "./utils.ts";
+import {getSessionKey, verifyDeviceID, encryptAesGcm, getFingerprint, securePrivateKey, showError, injectTranslations} from "./utils.ts";
 
 const registerBtn = document.getElementById("registerBtn") as HTMLButtonElement;
 const understandBtn = document.getElementById("understandBtn") as HTMLButtonElement;
@@ -17,6 +17,7 @@ downloadBtn.addEventListener("click", () => {
 
 addEventListener('DOMContentLoaded', () => {
     verifyDeviceID();
+    injectTranslations();
 })
 
 understandBtn.addEventListener("click", async ()  => {

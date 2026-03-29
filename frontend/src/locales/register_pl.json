@@ -1,0 +1,42 @@
+{
+  "register": {
+    "title": "Utwórz konto",
+    "subtitle": "Dołącz do serwisu GlueCrypt",
+    "button": "Kontynuuj z GlueAuth",
+    "zkp_title": "Technologia Zero-Knowledge",
+    "zkp_description": "Twoja tożsamość jest matematycznie chroniona. Nie przechowujemy haseł ani danych osobowych.",
+    "zkp_more": "Dowiedz się więcej",
+    "have_account": "Masz już konto?",
+    "login": "Zaloguj się",
+    "info_title": "Ważna informacja",
+    "info_message_1": "Żeby zalogować się na swoje konto z innego telefonu lub komputera,",
+    "info_message_2": "będziesz potrzebować tego kodu QR, który zaraz Ci pokażemy.",
+    "warning_1": "Jak zgubisz ten kod QR albo ktoś Ci go zabierze, tracisz konto na zawsze.",
+    "warning_2": "Nie przechowujemy żadnych haseł ani danych, więc nie możemy Ci pomóc odzyskać dostępu.",
+    "encrypt_qr": "Zaszyfruj kod QR",
+    "encrypt_pin_notice": "Dodaj 6-cyfrowy PIN dla bezpieczeństwa",
+    "understand_button": "Rozumiem, pokaż kod QR",
+    "qr_title": "Twój kod QR",
+    "qr_description": "Zeskanuj ten kod QR w GlueAuth, aby zalogować się na swoje konto na innym urządzeniu.",
+    "pin_prefix": "Twoj kod PIN:",
+    "pin_notice": "Kod PIN jest potrzebny aby w przyszłości odszyfrować ten kod QR",
+    "download_button": "Pobierz kod QR",
+    "login_link": "Zaloguj sie",
+    "generating_title": "Generowanie konta...",
+    "generating_wait": "To może potrwać kilka sekund, dziękujemy za cierpliwość!",
+    "error_title": "Wystąpił błąd",
+    "error_message": "Nie udało się utworzyć konta, spróbuj ponownie, jeżeli problem się powtarza to prawdopodobnie leży po naszej stronie :\\",
+    "back_to_register": "Powrót do rejestracji"
+  },
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Bezpieczne i anonimowe narzędzie do szyfrowania danych za pomocą AES.",
+    "created_by": "Stworzono z ",
+    "created_by2": " przez Glueeed.",
+    "opensource": "Projekt open-source dostępny na",
+    "opensource_link": "GitHub"
+  }
+}

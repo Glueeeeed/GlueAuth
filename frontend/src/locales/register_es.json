@@ -1,0 +1,42 @@
+{
+  "register": {
+    "title": "Crear cuenta",
+    "subtitle": "Únete al servicio GlueCrypt",
+    "button": "Continuar con GlueAuth",
+    "zkp_title": "Tecnología Zero-Knowledge",
+    "zkp_description": "Tu identidad está protegida matemáticamente. No guardamos contraseñas ni datos personales.",
+    "zkp_more": "Saber más",
+    "have_account": "¿Ya tienes una cuenta?",
+    "login": "Iniciar sesión",
+    "info_title": "Información Importante",
+    "info_message_1": "Para iniciar sesión en tu cuenta desde otro teléfono u ordenador,",
+    "info_message_2": "necesitarás este código QR, que estamos a punto de mostrarte.",
+    "warning_1": "Si pierdes este código QR o alguien te lo quita, perderás tu cuenta para siempre.",
+    "warning_2": "No guardamos ninguna contraseña ni datos, por lo que no podemos ayudarte a recuperar el acceso.",
+    "encrypt_qr": "Cifrar código QR",
+    "encrypt_pin_notice": "Añade un PIN de 6 dígitos para mayor seguridad",
+    "understand_button": "Entiendo, mostrar código QR",
+    "qr_title": "Tu código QR",
+    "qr_description": "Escanea este código QR en GlueAuth para iniciar sesión en tu cuenta en otro dispositivo.",
+    "pin_prefix": "Tu código PIN:",
+    "pin_notice": "El código PIN es necesario para descifrar este código QR en el futuro",
+    "download_button": "Descargar código QR",
+    "login_link": "Iniciar sesión",
+    "generating_title": "Generando cuenta...",
+    "generating_wait": "Esto puede tardar unos segundos, ¡gracias por tu paciencia!",
+    "error_title": "Ha ocurrido un error",
+    "error_message": "Error al crear la cuenta, por favor inténtalo de nuevo. Si el problema persiste, probablemente sea un error de nuestra parte :\\",
+    "back_to_register": "Volver al registro"
+  },
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Herramienta segura y anónima para el cifrado de datos mediante AES.",
+    "created_by": "Creado con ",
+    "created_by2": " por Glueeed.",
+    "opensource": "Proyecto de código abierto disponible en",
+    "opensource_link": "GitHub"
+  }
+}

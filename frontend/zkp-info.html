@@ -14,12 +14,17 @@
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css"
           integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
-    <link href="./src/style.css" rel="stylesheet">
+    <link href="src/style.css" rel="stylesheet">
 </head>
 <body class="bg-white">
 <nav class="fixed w-full top-0 z-10 h-25 text-amber-50 navbar ">
-    <div class="flex justify-start items-center">
-        <a href="/" class="text-4xl mt-7 mb-5 ml-10 font-['Pacifico'] text-[#eff1ed] no-underline">GlueCrypt</a>
+    <div class="flex justify-between items-center w-full px-10">
+        <a href="/" class="lang text-4xl mt-7 mb-5 font-['Pacifico'] text-[#eff1ed] no-underline" data-key="nav.brand">GlueCrypt</a>
+        <div class="flex gap-4 mt-2">
+            <button onclick="localStorage.setItem('lang', 'pl'); location.reload();" class="text-[#eff1ed] hover:text-white font-bold">PL</button>
+            <button onclick="localStorage.setItem('lang', 'en'); location.reload();" class="text-[#eff1ed] hover:text-white font-bold">EN</button>
+            <button onclick="localStorage.setItem('lang', 'es'); location.reload();" class="text-[#eff1ed] hover:text-white font-bold">ES</button>
+        </div>
     </div>
 </nav>
 <main class="pt-32 pb-20 px-4 flex justify-center items-center min-h-screen">
@@ -29,17 +34,17 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-[#36382e]/5 text-[#36382e] rounded-2xl mb-6">
                     <i class="ri-shield-check-fill text-3xl"></i>
                 </div>
-                <h1 class="text-4xl font-extrabold text-[#36382e] tracking-tight mb-4">Zero-Knowledge Proofs</h1>
-                <p class="text-gray-500 text-lg">Prywatność przez matematykę, nie przez zaufanie.</p>
+                <h1 class="lang text-4xl font-extrabold text-[#36382e] tracking-tight mb-4" data-key="zkp.title">Zero-Knowledge Proofs</h1>
+                <p class="lang text-gray-500 text-lg" data-key="zkp.subtitle">Prywatność przez matematykę, nie przez zaufanie.</p>
             </div>
 
             <div class="prose prose-slate max-w-none space-y-8 text-gray-700">
                 <section>
                     <h2 class="text-xl font-bold text-[#36382e] mb-3 flex items-center gap-2">
                         <i class="ri-question-line text-[#36382e]"></i>
-                        Czym jest ZKP?
+                        <span class="lang" data-key="zkp.what_is_title">Czym jest ZKP?</span>
                     </h2>
-                    <p class="leading-relaxed">
+                    <p class="lang leading-relaxed" data-key="zkp.what_is_description">
                         Dowód z wiedzą zerową (Zero-Knowledge Proof) to metoda kryptograficzna, która pozwala jednej stronie (udowadniającemu) udowodnić drugiej stronie (weryfikującemu), że dane stwierdzenie jest prawdziwe, bez ujawniania jakichkolwiek informacji poza samą prawdziwością tego stwierdzenia.
                     </p>
                 </section>
@@ -48,39 +53,39 @@
                     <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                         <h3 class="font-bold text-[#36382e] mb-2 flex items-center gap-2">
                             <i class="ri-lock-password-line"></i>
-                            Bez haseł
+                            <span class="lang" data-key="zkp.no_passwords_title">Bez haseł</span>
                         </h3>
-                        <p class="text-sm text-gray-600">Nie przesyłasz nam swojego hasła. Udowadniasz jedynie, że je znasz, korzystając z zaawansowanych równań matematycznych.</p>
+                        <p class="lang text-sm text-gray-600" data-key="zkp.no_passwords_description">Nie przesyłasz nam swojego hasła. Udowadniasz jedynie, że je znasz, korzystając z zaawansowanych równań matematycznych.</p>
                     </div>
                     <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                         <h3 class="font-bold text-[#36382e] mb-2 flex items-center gap-2">
                             <i class="fa-solid fa-user-secret"></i>
-                            Pełna anonimowość
+                            <span class="lang" data-key="zkp.anonymity_title">Pełna anonimowość</span>
                         </h3>
-                        <p class="text-sm text-gray-600">Twoje dane osobowe nigdy nie trafiają do naszej bazy danych. Twoja tożsamość pozostaje tylko Twoja.</p>
+                        <p class="lang text-sm text-gray-600" data-key="zkp.anonymity_description">Twoje dane osobowe nigdy nie trafiają do naszej bazy danych. Twoja tożsamość pozostaje tylko Twoja.</p>
                     </div>
                 </div>
 
                 <section>
-                    <h2 class="text-xl font-bold text-[#36382e] mb-3">Jak to działa w GlueCrypt?</h2>
+                    <h2 class="lang text-xl font-bold text-[#36382e] mb-3" data-key="zkp.how_it_works_title">Jak to działa w GlueCrypt?</h2>
                     <ol class="space-y-4">
                         <li class="flex gap-4">
                             <span class="shrink-0 w-8 h-8 bg-[#36382e] text-white rounded-full flex items-center justify-center font-bold text-sm">1</span>
-                            <p>Podczas logowania Twoja przeglądarka generuje unikalny dowód matematyczny na podstawie Twoich poświadczeń.</p>
+                            <p class="lang" data-key="zkp.step_1">Podczas logowania Twoja przeglądarka generuje unikalny dowód matematyczny na podstawie Twoich poświadczeń.</p>
                         </li>
                         <li class="flex gap-4">
                             <span class="shrink-0 w-8 h-8 bg-[#36382e] text-white rounded-full flex items-center justify-center font-bold text-sm">2</span>
-                            <p>Tylko ten dowód (a nie Twoje hasło) jest wysyłany do naszych serwerów.</p>
+                            <p class="lang" data-key="zkp.step_2">Tylko ten dowód (a nie Twoje hasło) jest wysyłany do naszych serwerów.</p>
                         </li>
                         <li class="flex gap-4">
                             <span class="shrink-0 w-8 h-8 bg-[#36382e] text-white rounded-full flex items-center justify-center font-bold text-sm">3</span>
-                            <p>Serwer weryfikuje dowód. Jeśli się zgadza, zostajesz zalogowany, mimo że serwer nigdy nie widział Twojego hasła.</p>
+                            <p class="lang" data-key="zkp.step_3">Serwer weryfikuje dowód. Jeśli się zgadza, zostajesz zalogowany, mimo że serwer nigdy nie widział Twojego hasła.</p>
                         </li>
                     </ol>
                 </section>
 
                 <div class="mt-10 pt-8 border-t border-gray-100 text-center">
-                    <a href="/gluecrypt/register" class="inline-flex items-center gap-2 font-bold text-[#36382e] hover:underline underline-offset-4">
+                    <a href="/gluecrypt/register" class="lang inline-flex items-center gap-2 font-bold text-[#36382e] hover:underline underline-offset-4" data-key="zkp.back_to_register">
                         <i class="ri-arrow-left-line"></i>
                         Powrót do rejestracji
                     </a>
@@ -93,17 +98,25 @@
     <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-center">
             <div class="mb-6 mt-6 md:mb-0">
-                <a class="text-3xl font-['Pacifico'] text-white" href="#">GlueCrypt</a>
-                <p class="mt-5 max-sm:text-sm opacity-80">Bezpieczne i anonimowe narzędzie do szyfrowania danych za pomocą AES.</p>
+                <a class="lang text-3xl font-['Pacifico'] text-white" href="#" data-key="footer.brand">GlueCrypt</a>
+                <p class="lang mt-5 max-sm:text-sm opacity-80" data-key="footer.description">Bezpieczne i anonimowe narzędzie do szyfrowania danych za pomocą AES.</p>
             </div>
         </div>
         <div class="border-t border-white/20 mt-6 p-6 text-center">
-            <p class="opacity-80">Stworzono z <i class=" text-red-600 ri-heart-fill"></i> przez Glueeed.</p>
-            <p class="opacity-80">Projekt open-source dostępny na <a href="https://github.com/Glueeeeed/GlueAuth"><i
-                    class="ri-github-fill"></i> GitHub</a></p>
+            <div class="flex justify-center gap-1">
+                <p class="lang opacity-80" data-key="footer.created_by">Stworzono z </p>
+                <i class=" text-red-600 ri-heart-fill"></i>
+                <p class="lang opacity-80" data-key="footer.created_by2"> przez Glueeed.</p>
+            </div>
+            <p class="opacity-80">
+                <span class="lang" data-key="footer.opensource">Projekt open-source dostępny na</span>
+                <a href="https://github.com/Glueeeeed/GlueAuth" class="lang" data-key="footer.opensource_link">
+                    <i class="ri-github-fill"></i> GitHub</a>
+            </p>
             <p class="text-sm mt-3 opacity-60">Version 1.0.0</p>
         </div>
     </div>
 </footer>
+<script type="module" src="./src/zkp-info.ts"></script>
 </body>
 </html>

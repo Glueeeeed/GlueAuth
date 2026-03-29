@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "zkp": {
+    "title": "Zero-Knowledge Proofs",
+    "subtitle": "Prywatność przez matematykę, nie przez zaufanie.",
+    "what_is_title": "Czym jest ZKP?",
+    "what_is_description": "Dowód z wiedzą zerową (Zero-Knowledge Proof) to metoda kryptograficzna, która pozwala jednej stronie (udowadniającemu) udowodnić drugiej stronie (weryfikującemu), że dane stwierdzenie jest prawdziwe, bez ujawniania jakichkolwiek informacji poza samą prawdziwością tego stwierdzenia.",
+    "no_passwords_title": "Bez haseł",
+    "no_passwords_description": "Nie przesyłasz nam swojego hasła. Udowadniasz jedynie, że je znasz, korzystając z zaawansowanych równań matematycznych.",
+    "anonymity_title": "Pełna anonimowość",
+    "anonymity_description": "Twoje dane osobowe nigdy nie trafiają do naszej bazy danych. Twoja tożsamość pozostaje tylko Twoja.",
+    "how_it_works_title": "Jak to działa w GlueCrypt?",
+    "step_1": "Podczas logowania Twoja przeglądarka generuje unikalny dowód matematyczny na podstawie Twoich poświadczeń.",
+    "step_2": "Tylko ten dowód (a nie Twoje hasło) jest wysyłany do naszych serwerów.",
+    "step_3": "Serwer weryfikuje dowód. Jeśli się zgadza, zostajesz zalogowany, mimo że serwer nigdy nie widział Twojego hasła.",
+    "back_to_register": "Powrót do rejestracji"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Bezpieczne i anonimowe narzędzie do szyfrowania danych za pomocą AES.",
+    "created_by": "Stworzono z ",
+    "created_by2": " przez Glueeed.",
+    "opensource": "Projekt open-source dostępny na",
+    "opensource_link": "GitHub"
+  }
+}

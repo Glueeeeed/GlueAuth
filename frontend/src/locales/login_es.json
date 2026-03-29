@@ -1,0 +1,34 @@
+{
+  "login": {
+    "title": "Iniciar sesión",
+    "subtitle": "Inicia sesión para unirte a GlueCrypt",
+    "button": "Continuar con GlueAuth",
+    "no_account": "¿Aún no tienes cuenta?",
+    "register": "Regístrate",
+    "credentials_not_found": "¡No se han encontrado tus credenciales!",
+    "restore_access": "Para restaurar el acceso a tu cuenta, escanea o importa un código QR",
+    "scan_qr": "Escanear código QR",
+    "upload_qr": "Cargar código QR",
+    "pin_notice": "Recuerda que para usar tu código QR podemos requerir un PIN de 6 dígitos.",
+    "back": "Volver",
+    "decrypt_title": "Descifrar código QR",
+    "decrypt_subtitle": "Introduce tu PIN de 6 dígitos para desbloquear las credenciales.",
+    "decrypt_button": "Descifrar e iniciar sesión",
+    "logging_in": "Iniciando sesión...",
+    "wait_message": "Esto puede tardar unos segundos, ¡gracias por tu paciencia!",
+    "error_title": "Ha ocurrido un error",
+    "error_message": "Error al iniciar sesión, por favor inténtalo de nuevo. Si el problema persiste, probablemente sea un error de nuestra parte :\\",
+    "back_to_login": "Volver al inicio de sesión"
+  },
+  "nav": {
+    "brand": "GlueCrypt"
+  },
+  "footer": {
+    "brand": "GlueCrypt",
+    "description": "Herramienta segura y anónima para el cifrado de datos mediante AES.",
+    "created_by": "Creado con ",
+    "created_by2": " por Glueeed.",
+    "opensource": "Proyecto de código abierto disponible en",
+    "opensource_link": "GitHub"
+  }
+}
