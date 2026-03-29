@@ -41,9 +41,12 @@ export interface sessionData {
 
 async function register(): Promise<void> {
     try {
+
+
         const uuid = crypto.randomUUID();
         const userID = uuid.replace(/-/g, '').slice(0, 31);
-        const sessionNonceHex : string = bytesToHex(randomBytes(12));
+        const commitmentNonce : string = bytesToHex(randomBytes(12));
+        const deviceIDNonce : string = bytesToHex(randomBytes(12));
         const generatingSection = document.getElementById("generatingSection") as HTMLDivElement;
         generatingSection.hidden = false;
         const back = document.getElementById("back") as HTMLDivElement;
@@ -56,7 +59,8 @@ async function register(): Promise<void> {
         await securePrivateKey(fingerprintData.thumbmark, privateKey, deviceID, sessionData.baseKey, userID);
         const encryptQRData = document.getElementById("encryptQR")  as HTMLInputElement;
         const commitment : string  = numberToHexUnpadded(identity.commitment);
-        const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,sessionNonceHex);
+        const encryptedCommitment : string = await encryptAesGcm(commitment, sessionData.secret,commitmentNonce);
+        const encryptedDeviceID : string = await encryptAesGcm(deviceID, sessionData.secret, deviceIDNonce);
 
         const registerResponse = await fetch(`/api/auth/register`, { // CHANGE TO YOUR DOMAIN
             method: 'POST',
@@ -66,9 +70,23 @@ async function register(): Promise<void> {
             body: JSON.stringify({
                 commitment: encryptedCommitment,
                 sessionID: sessionData.sessionID,
-                nonceHex: sessionNonceHex,
+                deviceID: encryptedDeviceID,
+                commitmentNonce: commitmentNonce,
+                deviceIDNonce: deviceIDNonce,
             })
         });
+
+        if (registerResponse.status === 409) {
+            console.log("Device is registered");
+            showError("Twoje urządzenie już posiada utworzoną tożsamość. Jeżeli to błąd, spróbuj zarejestrować się na innym urządzeniu.")
+        }
+
+        if (registerResponse.status === 429) {
+            console.log("Too many request");
+            showError("Przekroczono limit zapytań. Spróbuj ponownie później")
+        }
+
+
         if (!registerResponse.ok) {
             throw new Error('HTTP error! status: ' + registerResponse.status);
         }
@@ -115,6 +133,7 @@ async function register(): Promise<void> {
             qrSection.hidden = false;
         }
     } catch (error) {
+        console.log(error);
         showError();
     }
 

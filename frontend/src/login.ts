@@ -302,9 +302,15 @@ async function authenticateViaProof(proof : object , sessionID : string,): Promi
         }),
     })
 
+    if (authResponse.status === 429) {
+        showError("Przekroczono limit zapytań. Spróbuj ponownie później");
+        return;
+    }
+
     if (authResponse.ok) {
         console.log("Authenticated successfully");
     }
+
 
 }
 

@@ -24,7 +24,8 @@ interface RegisterRequest {
     deviceID: string;
     sessionID: string;
     secret: string;
-    nonceHex: string;
+    commitmentNonce: string;
+    deviceIDNonce: string;
 }
 
 interface RegisterResponse {
@@ -39,7 +40,7 @@ interface Credentials {
 
 
 export const register = async (req: Request<{}, {}, RegisterRequest>, res: Response<RegisterResponse | {error: string}>): Promise<void> => {
-    const { commitment, sessionID , secret, nonceHex, deviceID } = req.body;
+    const { commitment, sessionID , secret, commitmentNonce, deviceIDNonce, deviceID } = req.body;
     try {
 
 
@@ -47,13 +48,18 @@ export const register = async (req: Request<{}, {}, RegisterRequest>, res: Respo
             console.log(`Secret for session ID ${sessionID} is correct.`);
         }
 
+        if (!commitmentNonce || !deviceIDNonce) {
+            deleteSecret(sessionID);
+            res.status(400).send({error: "Cannot decrypt data, deviceID nonce or commitment nonce missing."});
+        }
+
         if (!commitment || !sessionID || !deviceID) {
             deleteSecret(sessionID);
             res.status(400).json({ error: 'Missing commitment or sessionID or DeviceID' });
             return;
         }
-        const decryptedCommitment : string =  await decryptAesGcm(commitment, Secrets.get(sessionID) || '', nonceHex);
-        const decryptedDeviceID : string = await decryptAesGcm(deviceID, Secrets.get(sessionID) || '', nonceHex);
+        const decryptedCommitment : string =  await decryptAesGcm(commitment, Secrets.get(sessionID) || '', commitmentNonce);
+        const decryptedDeviceID : string = await decryptAesGcm(deviceID, Secrets.get(sessionID) || '', deviceIDNonce);
 
         if (await checkIfCommitmentExists(decryptedCommitment)) {
             deleteSecret(sessionID);
