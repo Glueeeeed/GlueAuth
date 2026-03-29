@@ -5,7 +5,7 @@
   "zkp": {
     "title": "Zero-Knowledge Proofs",
     "subtitle": "Privacidad mediante matemáticas, nie mediante confianza.",
-    "what_is_title": "¿Qué jest ZKP?",
+    "what_is_title": "¿Qué es ZKP?",
     "what_is_description": "Una Prueba de Conocimiento Cero (Zero-Knowledge Proof) es un método criptográfico que permite a una parte (el probador) demostrar a otra parte (el verificador) que una declaración dada es verdadera, sin revelar ninguna información más allá de la validez de la propia declaración.",
     "no_passwords_title": "Sin contraseñas",
     "no_passwords_description": "No nos envías tu contraseña. Solo demuestras que la conoces utilizando ecuaciones matemáticas avanzadas.",
