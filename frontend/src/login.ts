@@ -18,7 +18,8 @@ import type {SemaphoreProof} from "@semaphore-protocol/core";
 interface secretStructure {
     key : string;
     salt: string;
-    nonce: string;
+    privateKeyNonce: string;
+    uuidNonce : string;
     uuid : string;
 }
 
@@ -188,10 +189,12 @@ async function checkIfSecretExists() : Promise<object | null> {
         });
         const existingKey : string = await db.get('secrets', 'privateKey');
         const salt : string = await db.get('secrets', 'salt');
-        const nonceHex : string = await db.get('secrets', 'nonceHex');
+        const privateKeyNonce : string = await db.get('secrets', 'privateKeyNonce');
+        const uuidNonce : string = await db.get('secrets', 'uuidNonce');
         const uuid : string = await db.get('secrets', 'uuid');
-        if (existingKey != undefined && nonceHex != undefined && salt != undefined) {
-            return {key: existingKey, salt: salt, nonce: nonceHex, uuid: uuid};
+        console.log(privateKeyNonce,uuidNonce);
+        if (existingKey != undefined && privateKeyNonce != undefined && salt != undefined && uuidNonce != undefined) {
+            return {key: existingKey, salt: salt, privateKeyNonce: privateKeyNonce, uuidNonce: uuidNonce, uuid: uuid};
         } else {
             const loadingSection = document.getElementById("loadingSection") as HTMLDivElement;
             loadingSection.hidden = true;
@@ -247,8 +250,9 @@ async function login(): Promise<void> {
                 const combinedKey: string = fingerprint.thumbmark + deviceID + baseKey;
                 const saltBytes: Uint8Array<ArrayBufferLike> = hexToBytes(secrets.salt);
                 const key: Uint8Array<ArrayBufferLike> = pbkdf2(sha256, combinedKey, saltBytes, {c: 524288, dkLen: 32});
-                const secret: string = await decryptAesGcm(secrets.key, bytesToHex(key), secrets.nonce);
-                const uuid: string = await decryptAesGcm(secrets.uuid, bytesToHex(key), secrets.nonce);
+                const secret: string = await decryptAesGcm(secrets.key, bytesToHex(key), secrets.privateKeyNonce);
+                const uuid: string = await decryptAesGcm(secrets.uuid, bytesToHex(key), secrets.uuidNonce);
+
                 const merkleRoot: Group = await getMerkleRoot();
                 const proof: SemaphoreProof = await generateProofs(merkleRoot, sessionData.sessionID, secret, uuid);
                 await authenticateViaProof(proof, sessionData.sessionID);
