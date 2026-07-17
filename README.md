@@ -5,7 +5,7 @@
 ## English / English version
 
 ### Introduction
-GlueAuth is a decentralized authentication system leveraging Zero-Knowledge Proofs (ZKP). It enables secure user registration and login without storing passwords or personal data. Identity is mathematically protected using ZKP technology.
+GlueAuth is authentication system leveraging Zero-Knowledge Proofs (ZKP). It enables secure user registration and login without storing passwords or personal data. Identity is mathematically protected using ZKP technology.
 
 
 ### Features
@@ -79,7 +79,7 @@ MIT License - see [LICENSE.md](LICENSE.md)
 ## Wersja Polska / Polish version
 
 ### Wstęp
-GlueAuth to zdecentralizowany system autentykacji wykorzystujący Dowody z zerową wiedzą (ZKP). Umożliwia bezpieczną rejestrację i logowanie użytkowników bez przechowywania haseł lub danych osobowych. Tożsamość jest matematycznie chroniona dzięki technologii ZKP.
+GlueAuth to system autentykacji wykorzystujący Dowody z zerową wiedzą (ZKP). Umożliwia bezpieczną rejestrację i logowanie użytkowników bez przechowywania haseł lub danych osobowych. Tożsamość jest matematycznie chroniona dzięki technologii ZKP.
 
 
 
